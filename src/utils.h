@@ -1,9 +1,9 @@
 #pragma once
 
 typedef enum {
-    MSG_TRACE,
+    MSG_TRACE = 0,
     MSG_DEBUG,
-    MSG_INFO = 0,
+    MSG_INFO,
     MSG_WARNING,
     MSG_ERROR
 } PrintPriority;

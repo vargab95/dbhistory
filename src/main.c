@@ -35,7 +35,7 @@ static ReturnCodes process_arguments(const int argc, const char **argv) {
             There is no command line argument so
             list the history of the current directory. */
         case -1:
-            print_message(0, "List history of current directory\n");
+            print_message(MSG_INFO, "List history of current directory\n");
             client_get_records(".");
             return EC_OK;
         /* Help */
@@ -46,40 +46,40 @@ static ReturnCodes process_arguments(const int argc, const char **argv) {
             Starts a daemon instead of opening sqlite
             at every run. */
         case 'd':
-            print_message(0, "Starting daemon\n");
+            print_message(MSG_INFO, "Starting daemon\n");
             daemon_run();
             return EC_OK;
         /* Add
             Add a new record to the history database. */
         case 'a':
-            print_message(0, "Adding entry %s\n", optarg);
+            print_message(MSG_INFO, "Adding entry %s\n", optarg);
             client_add_record(optarg);
             return EC_OK;
         /* Search
             Searches history info based on the specified regex. */
         case 's':
-            print_message(0, "Printing messages based on regex %s\n", optarg);
+            print_message(MSG_INFO, "Printing messages based on regex %s\n", optarg);
             client_get_records(optarg);
             return EC_OK;
         /* Upper
             Prints history of upper directory and children. */
         case 'u':
-            print_message(0, "Printing messages %s folders upper\n", optarg);
+            print_message(MSG_INFO, "Printing messages %s folders upper\n", optarg);
             return EC_OK;
         /* Missing value */
         case ':':
-            print_message(0, "Missing value.\n");
+            print_message(MSG_INFO, "Missing value.\n");
             return EC_MISSING_ARG;
         /* Unknown argument was specified */
         case '?':
-            print_message(0, "Unknown option: %c\n", optopt);
+            print_message(MSG_INFO, "Unknown option: %c\n", optopt);
             return EC_INVALID_ARG;
     }
     return EC_SYS_SW_ERR;
 }
 
 static void print_help(const char * name) {
-    print_message(0,
+    print_message(MSG_INFO,
                   "Directory based command history.\n\n"
                   "Usage: %s [OPTIONS] [COMMAND]\n"
                   "\t-h Shows this help message\n"

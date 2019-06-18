@@ -3,15 +3,15 @@
 #include <time.h>
 
 typedef enum {
-    DB_ERROR,
-    DB_SUCCESS = 0,
+    DB_ERROR = 0,
+    DB_SUCCESS,
     DB_EMPTY
 } DBReturnCodes;
 
 typedef struct {
     const char * path;
     const char * command;
-    time_t * timestamp;
+    time_t timestamp;
 } history_record_t;
 
 typedef struct {
