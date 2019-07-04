@@ -27,7 +27,7 @@ int main(int argc, const char **argv) {
 }
 
 static ReturnCodes process_arguments(const int argc, const char **argv) {
-    int opt = getopt(argc, (char**)argv, ":a:s:u:dh");
+    int opt = getopt(argc, (char**)argv, ":a:dh");
 
     switch(opt)
     {
@@ -36,7 +36,7 @@ static ReturnCodes process_arguments(const int argc, const char **argv) {
             list the history of the current directory. */
         case -1:
             print_message(MSG_INFO, "List history of current directory\n");
-            client_get_records(".");
+            client_get_records((argc > 1) ? argv[1] : ".");
             return EC_OK;
         /* Help */
         case 'h':
@@ -55,17 +55,6 @@ static ReturnCodes process_arguments(const int argc, const char **argv) {
             print_message(MSG_INFO, "Adding entry %s\n", optarg);
             client_add_record(optarg);
             return EC_OK;
-        /* Search
-            Searches history info based on the specified regex. */
-        case 's':
-            print_message(MSG_INFO, "Printing messages based on regex %s\n", optarg);
-            client_get_records(optarg);
-            return EC_OK;
-        /* Upper
-            Prints history of upper directory and children. */
-        case 'u':
-            print_message(MSG_INFO, "Printing messages %s folders upper\n", optarg);
-            return EC_OK;
         /* Missing value */
         case ':':
             print_message(MSG_INFO, "Missing value.\n");
@@ -79,13 +68,10 @@ static ReturnCodes process_arguments(const int argc, const char **argv) {
 }
 
 static void print_help(const char * name) {
-    print_message(MSG_INFO,
-                  "Directory based command history.\n\n"
-                  "Usage: %s [OPTIONS] [COMMAND]\n"
-                  "\t-h Shows this help message\n"
-                  "\t-d Starts a history logger daemon\n"
-                  "\t-a Adds the COMMAND to the history db\n"
-                  "\t-s Prints logs based on the given regex\n"
-                  "\t-u Prints logs n folders upper\n",
-                  name);
+    printf("Directory based command history.\n\n"
+           "Usage: %s [OPTIONS] [COMMAND]\n"
+           "\t-h Shows this help message\n"
+           "\t-d Starts a history maintainer daemon\n"
+           "\t-a Adds the COMMAND to the history db\n",
+           name);
 }

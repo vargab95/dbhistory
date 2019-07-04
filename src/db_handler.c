@@ -34,10 +34,12 @@ static const char insert_history_record_cmd[] = "INSERT INTO history(path_id, co
 static const char get_history_records_cmd[] = "SELECT path, command, timestamp FROM history INNER JOIN path_map ON path_map.id = history.path_id WHERE path_id = %d;";
 static const char count_history_records_cmd[] = "SELECT count(*) FROM history WHERE path_id = %d;";
 
+
 static DBReturnCodes db_initialize();
 static DBReturnCodes run_sql_command(const char * command, ...);
 static uint32_t get_last_path_map_id();
 static uint32_t get_path_id(const char * path);
+static void copy_results(sqlite3_stmt *pStmt, directory_history_t * history);
 
 extern DBReturnCodes db_connect(const char * db_path) {
     char absolute_path[PATH_MAX];
@@ -105,24 +107,8 @@ extern DBReturnCodes db_get_history(const char * path, directory_history_t * his
         if(sqlite3_prepare_v2(db, buffer, -1, &res, &tail) != SQLITE_OK) {
             print_message(MSG_ERROR, "Systematic software error. Error while getting history records for an existing path: %s\n", path);
             return DB_ERROR;
-        } else {
-            const char * tmp;
-            uint32_t idx = 0;
-            struct tm tm;
-            size_t str_size;
-            while(SQLITE_ROW == sqlite3_step(res)) {
-                print_message(MSG_DEBUG, "Adding new record\n");
-                str_size = strlen(sqlite3_column_text(res, 0));
-                history->records[idx].path = (char*)malloc(str_size * sizeof(char));
-                memcpy((char*const)history->records[idx].path, sqlite3_column_text(res, 0), str_size);
-                str_size = strlen(sqlite3_column_text(res, 1));
-                history->records[idx].command = (char*)malloc(str_size * sizeof(char));
-                memcpy((char*const)history->records[idx].command, sqlite3_column_text(res, 1), str_size);
-                strptime(sqlite3_column_text(res, 2), "%Y-%m-%d %H:%M:%S", &tm);
-                history->records[idx].timestamp = mktime(&tm);
-                idx++;
-            }
         }
+        copy_results(res, history);
         return DB_SUCCESS;
     }
 }
@@ -195,4 +181,22 @@ static uint32_t get_path_id(const char * path) {
         }
     }
     return 0;
+}
+
+static void copy_results(sqlite3_stmt *pStmt, directory_history_t * history) {
+    const char * tmp;
+    uint32_t idx = 0;
+    struct tm tm;
+    size_t str_size;
+    while(SQLITE_ROW == sqlite3_step(pStmt)) {
+        str_size = strlen(sqlite3_column_text(pStmt, 0)) + 1;
+        history->records[idx].path = (char*)malloc(str_size * sizeof(char));
+        memcpy((char*const)history->records[idx].path, sqlite3_column_text(pStmt, 0), str_size);
+        str_size = strlen(sqlite3_column_text(pStmt, 1)) + 1;
+        history->records[idx].command = (char*)malloc(str_size * sizeof(char));
+        memcpy((char*const)history->records[idx].command, sqlite3_column_text(pStmt, 1), str_size);
+        strptime(sqlite3_column_text(pStmt, 2), "%Y-%m-%d %H:%M:%S", &tm);
+        history->records[idx].timestamp = mktime(&tm);
+        idx++;
+    }
 }

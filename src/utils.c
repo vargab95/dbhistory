@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <time.h>
+#include <errno.h>
+#include <string.h>
 
+#include "config.h"
 #include "utils.h"
 
 static const char * errorTypeMapping[] = {
@@ -12,20 +15,27 @@ static const char * errorTypeMapping[] = {
     "ERROR"
 };
 
+FILE *lfptr = NULL;
+
 extern void print_message(PrintPriority priority, const char * format, ...) {
     va_list args;
     time_t timer;
     char buffer[26];
     struct tm* tm_info;
 
-    time(&timer);
-    tm_info = localtime(&timer);
+    if (!lfptr) lfptr = fopen(DEFAULT_LOG_PATH, "a+");
+    if (lfptr) {
+        time(&timer);
+        tm_info = localtime(&timer);
 
-    strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", tm_info);
-    printf("%s - %s - ", buffer, errorTypeMapping[priority]);
+        strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", tm_info);
+        fprintf(lfptr, "%s - %s - ", buffer, errorTypeMapping[priority]);
 
-    va_start(args, format);
-    vprintf(format, args);
-    va_end(args);
+        va_start(args, format);
+        vfprintf(lfptr, format, args);
+        va_end(args);
+    } else {
+        printf("Error during opening log file: %s\n", strerror(errno));
+    }
 }
 
