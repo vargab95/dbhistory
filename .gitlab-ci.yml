@@ -1,0 +1,59 @@
+stages:
+    - preparation
+    - pre-build-tests
+    - build
+    - post-build-tests
+    - package
+    - deploy
+    - cleanup
+
+install_packages:
+    stage: preparation
+    script:
+        - echo
+
+linter:
+    stage: pre-build-tests
+    script:
+        - echo
+
+build:
+    stage: build
+    script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - make all
+
+unit_test:
+    stage: pre-build-tests
+    script:
+        - echo
+
+unit_test_multiple_times:
+    stage: pre-build-tests
+    script:
+        - echo
+
+coverage:
+    stage: pre-build-tests
+    script:
+        - echo
+
+regression_test:
+    stage: post-build-tests
+    script:
+        - echo
+
+upload_to_software_repository:
+    stage: deploy
+    script:
+        - echo
+    only:
+        - tags
+
+cleanup:
+    stage: cleanup
+    script:
+        - echo
+    when: always
