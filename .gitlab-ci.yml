@@ -10,7 +10,7 @@ stages:
 install_packages:
     stage: preparation
     script:
-        - echo
+        - apt-get install cmake make
 
 linter:
     stage: pre-build-tests
