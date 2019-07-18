@@ -1,11 +1,11 @@
 stages:
-    - preparation
-    - pre-build-tests
+#    - preparation
+#    - pre-build-tests
     - build
-    - post-build-tests
-    - package
-    - deploy
-    - cleanup
+#    - post-build-tests
+#    - package
+#    - deploy
+#    - cleanup
 
 default:
     image: debian
@@ -24,6 +24,8 @@ linter:
 build:
     stage: build
     script:
+        - apt-get update
+        - apt-get -qq -y install cmake make gcc libsqlite3-dev
         - mkdir build
         - cd build
         - cmake ..
