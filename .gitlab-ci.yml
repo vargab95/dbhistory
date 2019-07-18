@@ -1,13 +1,6 @@
 stages:
     - build
 
-#    - preparation
-#    - pre-build-tests
-#    - post-build-tests
-#    - package
-#    - deploy
-#    - cleanup
-
 default:
     image: debian
 
