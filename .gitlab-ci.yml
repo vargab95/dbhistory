@@ -1,7 +1,8 @@
 stages:
+    - build
+
 #    - preparation
 #    - pre-build-tests
-    - build
 #    - post-build-tests
 #    - package
 #    - deploy
