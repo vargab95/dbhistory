@@ -11,3 +11,4 @@ typedef enum {
 
 extern ClientReturnCodes client_add_record(const char * command);
 extern ClientReturnCodes client_get_records(const char * path);
+extern ClientReturnCodes client_search_records(const char * pattern);

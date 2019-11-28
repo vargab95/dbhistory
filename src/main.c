@@ -27,17 +27,20 @@ int main(int argc, const char **argv) {
 }
 
 static ReturnCodes process_arguments(const int argc, const char **argv) {
-    int opt = getopt(argc, (char**)argv, ":a:dh");
+    int opt = getopt(argc, (char**)argv, ":a:s:dh");
 
-    // TODO Refactor to be able to use the regex with a separate option
     switch(opt)
     {
         /* List directory
             There is no command line argument so
             list the history of the current directory. */
         case -1:
-            print_message(MSG_INFO, "List history of current directory\n");
+            print_message(MSG_INFO, "List history of %s directory.\n", (argc > 1) ? argv[1] : "current");
             client_get_records((argc > 1) ? argv[1] : ".");
+            return EC_OK;
+        case 's':
+            print_message(MSG_INFO, "List history for %s regexp.\n", optarg);
+            client_search_records(optarg);
             return EC_OK;
         /* Help */
         case 'h':
@@ -73,6 +76,7 @@ static void print_help(const char * name) {
            "Usage: %s [OPTIONS] [COMMAND]\n"
            "\t-h Shows this help message\n"
            "\t-d Starts a history maintainer daemon\n"
-           "\t-a Adds the COMMAND to the history db\n",
+           "\t-a Adds the COMMAND to the history db\n"
+           "\t-s Search by applying given regex to pathes\n",
            name);
 }

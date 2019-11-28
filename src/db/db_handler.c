@@ -62,14 +62,6 @@ extern DBReturnCodes db_add_record(const char * path, const char * command) {
     return sql_run_command(NULL, NULL, insert_history_record_cmd, path_id, command);
 }
 
-extern DBReturnCodes db_get_history(const char * path, directory_history_t * history) {
-#ifdef DBHISTORY_USE_REGEX
-    db_get_history_re(path, history);
-#else
-    db_get_history_no_re(path, history);
-#endif
-}
-
 extern DBReturnCodes db_close() {
     print_message(MSG_TRACE, "Closing sql file\n");
     sql_close();
