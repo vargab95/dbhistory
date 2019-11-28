@@ -23,6 +23,8 @@ extern void print_message(PrintPriority priority, const char * format, ...) {
     char buffer[26];
     struct tm* tm_info;
 
+    if (priority < MSG_DEBUG) return;
+
     if (!lfptr) lfptr = fopen(DEFAULT_LOG_PATH, "a+");
     if (lfptr) {
         time(&timer);

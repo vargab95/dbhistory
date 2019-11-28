@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <errno.h>
+#include <string.h>
+#include <sqlite3.h>
+#include <linux/limits.h>
+
+#define __USE_XOPEN
+#include <time.h>
+
+#include "utils.h"
+#include "config.h"
+#include "sqlite_wrapper.h"
+#include "db/db_common.h"
+#ifdef DBHISTORY_USE_REGEX
+#include "db/db_read_re.h"
+#else
+#include "db/db_read.h"
+#endif
+#include "db/db_handler.h"
+
+extern DBReturnCodes db_connect(const char * db_path) {
+    const char create_db_structure_cmd[] = "CREATE TABLE IF NOT EXISTS \
+                                            path_map( \
+                                                    id INTEGER PRIMARY KEY AUTOINCREMENT,\
+                                                    path VARCHAR(%d) NOT NULL UNIQUE \
+                                            );\n \
+                                            CREATE TABLE IF NOT EXISTS \
+                                            history( \
+                                                    id INTEGER PRIMARY KEY AUTOINCREMENT, \
+                                                    path_id INTEGER NOT NULL REFERENCES path_map(id), \
+                                                    command VARCHAR(%d) NOT NULL, \
+                                                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP \
+                                            );";
+    char absolute_path[PATH_MAX];
+    DBReturnCodes return_code = DB_SUCCESS;
+
+    realpath(db_path, absolute_path);
+    print_message(MSG_DEBUG, "Trying to open database: %s\n", absolute_path);
+    if (SQLITE_OK != sql_connect(absolute_path, create_db_structure_cmd)) {
+        return_code = DB_ERROR;
+    }
+
+    return return_code;
+}
+
+extern DBReturnCodes db_add_record(const char * path, const char * command) {
+    const char insert_path_cmd[] = "INSERT INTO path_map(path) VALUES (\"%s\");";
+    const char insert_history_record_cmd[] = "INSERT INTO history(path_id, command) VALUES(%d, \"%s\");";
+    uint32_t path_id;
+    if (SQLITE_OK == sql_run_command(NULL, NULL, insert_path_cmd, path)) {
+        print_message(MSG_DEBUG, "Using last row insert id.\n");
+        path_id = sql_get_last_insertion_id();
+    } else {
+        path_id = get_path_id(path);
+        if (0 == path_id) {
+            print_message(MSG_ERROR, "Systematic software failure. Unknown path id after insert operation.\n");
+            return DB_ERROR;
+        }
+    }
+    return sql_run_command(NULL, NULL, insert_history_record_cmd, path_id, command);
+}
+
+extern DBReturnCodes db_get_history(const char * path, directory_history_t * history) {
+#ifdef DBHISTORY_USE_REGEX
+    db_get_history_re(path, history);
+#else
+    db_get_history_no_re(path, history);
+#endif
+}
+
+extern DBReturnCodes db_close() {
+    print_message(MSG_TRACE, "Closing sql file\n");
+    sql_close();
+    return DB_SUCCESS;
+}

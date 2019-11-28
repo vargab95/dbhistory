@@ -29,6 +29,7 @@ int main(int argc, const char **argv) {
 static ReturnCodes process_arguments(const int argc, const char **argv) {
     int opt = getopt(argc, (char**)argv, ":a:dh");
 
+    // TODO Refactor to be able to use the regex with a separate option
     switch(opt)
     {
         /* List directory
