@@ -9,7 +9,7 @@ typedef enum
     DB_ERROR = 0,
     DB_SUCCESS,
     DB_EMPTY
-} DBReturnCodes;
+} db_return_codes_t;
 
 typedef struct
 {

@@ -62,7 +62,7 @@ static int get_path_callback(void *data, int argc, char **argv, char **col_names
     return 0;
 }
 
-extern DBReturnCodes db_search_history(const char *path, directory_history_t *history)
+extern db_return_codes_t db_search_history(const char *path, directory_history_t *history)
 {
     const char get_path_count_cmd[] = "SELECT COUNT(*) FROM path_map;";
     const char get_path_cmd[] = "SELECT * FROM path_map;";

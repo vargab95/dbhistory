@@ -20,7 +20,7 @@
 #endif
 #include "db/db_handler.h"
 
-extern DBReturnCodes db_connect(const char *db_path)
+extern db_return_codes_t db_connect(const char *db_path)
 {
     const char create_db_structure_cmd[] = "CREATE TABLE IF NOT EXISTS \
                                             path_map( \
@@ -35,7 +35,7 @@ extern DBReturnCodes db_connect(const char *db_path)
                                                     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP \
                                             );";
     char absolute_path[PATH_MAX];
-    DBReturnCodes return_code = DB_SUCCESS;
+    db_return_codes_t return_code = DB_SUCCESS;
 
     realpath(db_path, absolute_path);
     print_message(MSG_DEBUG, "Trying to open database: %s\n", absolute_path);
@@ -47,7 +47,7 @@ extern DBReturnCodes db_connect(const char *db_path)
     return return_code;
 }
 
-extern DBReturnCodes db_add_record(const char *path, const char *command)
+extern db_return_codes_t db_add_record(const char *path, const char *command)
 {
     const char insert_path_cmd[] = "INSERT INTO path_map(path) VALUES (\"%s\");";
     const char insert_history_record_cmd[] = "INSERT INTO history(path_id, command) VALUES(%d, \"%s\");";
@@ -69,7 +69,7 @@ extern DBReturnCodes db_add_record(const char *path, const char *command)
     return sql_run_command(NULL, NULL, insert_history_record_cmd, path_id, command);
 }
 
-extern DBReturnCodes db_close()
+extern db_return_codes_t db_close()
 {
     print_message(MSG_TRACE, "Closing sql file\n");
     sql_close();

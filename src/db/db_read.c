@@ -20,7 +20,7 @@ static int get_records_callback(void *data, int argc, char **argv, char **col_na
     return 0;
 }
 
-extern DBReturnCodes db_get_history(const char *path, directory_history_t *history)
+extern db_return_codes_t db_get_history(const char *path, directory_history_t *history)
 {
     uint32_t path_id = get_path_id(path);
     print_message(MSG_TRACE, "%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);

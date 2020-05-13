@@ -12,10 +12,10 @@
 
 static void print_records(const directory_history_t *dir_hist);
 
-extern ClientReturnCodes client_add_record(const char *command)
+extern client_return_codes_t client_add_record(const char *command)
 {
     char cwd[PATH_MAX];
-    ClientReturnCodes return_code = CL_ERROR;
+    client_return_codes_t return_code = CL_ERROR;
     if (!getcwd(cwd, sizeof(cwd)))
     {
         print_message(MSG_ERROR, "Invalid path detected!\n");
@@ -33,10 +33,10 @@ extern ClientReturnCodes client_add_record(const char *command)
     return return_code;
 }
 
-extern ClientReturnCodes client_get_records(const char *path)
+extern client_return_codes_t client_get_records(const char *path)
 {
     directory_history_t dir_hist = {0};
-    ClientReturnCodes return_code = CL_ERROR;
+    client_return_codes_t return_code = CL_ERROR;
 
     char absolute_path[PATH_MAX];
     if (!realpath(path, absolute_path))
@@ -58,10 +58,10 @@ extern ClientReturnCodes client_get_records(const char *path)
     return return_code;
 }
 
-extern ClientReturnCodes client_search_records(const char *pattern)
+extern client_return_codes_t client_search_records(const char *pattern)
 {
     directory_history_t dir_hist = {0};
-    ClientReturnCodes return_code = CL_ERROR;
+    client_return_codes_t return_code = CL_ERROR;
 
     if (DB_SUCCESS == db_connect(g_dbhistory_configuration.database_path))
     {

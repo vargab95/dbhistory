@@ -8,8 +8,8 @@ typedef enum
     CL_EMPTY,
     CL_INVALID_INPUT,
     CL_INVALID_PATH
-} ClientReturnCodes;
+} client_return_codes_t;
 
-extern ClientReturnCodes client_add_record(const char *command);
-extern ClientReturnCodes client_get_records(const char *path);
-extern ClientReturnCodes client_search_records(const char *pattern);
+extern client_return_codes_t client_add_record(const char *command);
+extern client_return_codes_t client_get_records(const char *path);
+extern client_return_codes_t client_search_records(const char *pattern);
