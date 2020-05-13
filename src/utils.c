@@ -16,7 +16,7 @@ static const char *errorTypeMapping[] = {
 
 FILE *lfptr = NULL;
 
-extern void print_message(PrintPriority priority, const char *format, ...)
+extern void print_message(print_priority_t priority, const char *format, ...)
 {
     va_list args;
     time_t timer;
@@ -37,7 +37,7 @@ extern void print_message(PrintPriority priority, const char *format, ...)
         }
     }
 
-    if (lfptr)
+    if (lfptr && (g_dbhistory_configuration.log_level >= priority))
     {
         time(&timer);
         tm_info = localtime(&timer);

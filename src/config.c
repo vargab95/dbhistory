@@ -11,7 +11,8 @@ dbhistory_configuration_t g_dbhistory_configuration = {
     .database_path = "/tmp/.dbhistory.sql",
     .log_file_path = "/tmp/.dbhistory.log",
     .daemon_tick_time = 10,
-    .max_command_length = 4096};
+    .max_command_length = 4096,
+    .log_level = MSG_INFO};
 
 static int handler(void *user, const char *section, const char *name, const char *value);
 
@@ -45,6 +46,18 @@ static int handler(void *user, const char *section, const char *name, const char
     else if (strcmp(name, "max_command_length") == 0)
     {
         config->max_command_length = atoi(value);
+    }
+    else if (strcmp(name, "log_level") == 0)
+    {
+        int log_level = atoi(value);
+        if (log_level < MSG_TRACE || log_level > MSG_ERROR)
+        {
+            print_message(MSG_ERROR, "Invalid log level was set (%d).", log_level);
+        }
+        else
+        {
+            config->log_level = log_level;
+        }
     }
     else
     {

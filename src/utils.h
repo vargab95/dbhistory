@@ -7,6 +7,6 @@ typedef enum
     MSG_INFO,
     MSG_WARNING,
     MSG_ERROR
-} PrintPriority;
+} print_priority_t;
 
-extern void print_message(PrintPriority priority, const char *format, ...);
+extern void print_message(print_priority_t priority, const char *format, ...);
