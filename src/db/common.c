@@ -9,7 +9,7 @@
 
 #include "utils.h"
 #include "sqlite_wrapper.h"
-#include "db_common.h"
+#include "common.h"
 
 static int get_path_id_callback(void *data, int argc, char **argv, char **col_names);
 static int get_record_count_callback(void *data, int argc, char **argv, char **col_names);

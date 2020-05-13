@@ -8,7 +8,7 @@
 #include "config.h"
 #include "utils.h"
 #include "client.h"
-#include "db/db_handler.h"
+#include "db/handler.h"
 
 static void print_records(const directory_history_t *dir_hist);
 

@@ -12,13 +12,13 @@
 #include "utils.h"
 #include "config.h"
 #include "sqlite_wrapper.h"
-#include "db/db_common.h"
+#include "db/common.h"
 #ifdef DBHISTORY_USE_REGEX
-#include "db/db_read_re.h"
+#include "db/read_re.h"
 #else
-#include "db/db_read.h"
+#include "db/read.h"
 #endif
-#include "db/db_handler.h"
+#include "db/handler.h"
 
 extern db_return_codes_t db_connect(const char *db_path)
 {

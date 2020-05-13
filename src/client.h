@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __CLIENT_H__
+#define __CLIENT_H__
 
 typedef enum
 {
@@ -13,3 +14,5 @@ typedef enum
 extern client_return_codes_t client_add_record(const char *command);
 extern client_return_codes_t client_get_records(const char *path);
 extern client_return_codes_t client_search_records(const char *pattern);
+
+#endif

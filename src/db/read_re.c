@@ -9,8 +9,8 @@
 
 #include "utils.h"
 #include "sqlite_wrapper.h"
-#include "db/db_common.h"
-#include "db/db_read.h"
+#include "db/common.h"
+#include "db/read.h"
 
 typedef struct
 {
