@@ -1,5 +1,17 @@
 cmake_minimum_required (VERSION 3.5)
 
+include(ExternalProject)
+
+ExternalProject_Add(inih
+                    GIT_REPOSITORY https://github.com/benhoyt/inih.git
+                    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/inih
+                    SOURCE_DIR        "${CMAKE_BINARY_DIR}/inih-src"
+                    BINARY_DIR        "${CMAKE_BINARY_DIR}/inih-build"
+                    CONFIGURE_COMMAND ""
+                    BUILD_COMMAND     ""
+                    INSTALL_COMMAND   ""
+                    TEST_COMMAND      "")
+
 find_package (SQLite3 REQUIRED)
 
 include_directories(${SQLITE3_INCLUDE_DIRS})
@@ -15,6 +27,8 @@ add_executable (dbhistory
                 ${CMAKE_CURRENT_SOURCE_DIR}/sqlite_wrapper.c
                 ${CMAKE_CURRENT_SOURCE_DIR}/utils.c
                 ${CMAKE_CURRENT_SOURCE_DIR}/client.c)
+
+add_dependencies(dbhistory inih)
 
 target_link_libraries (dbhistory ${SQLITE3_LIBRARIES})
 
