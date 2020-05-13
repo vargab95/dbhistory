@@ -53,6 +53,7 @@ extern client_return_codes_t client_get_records(const char *path)
             print_records(&dir_hist);
             return_code = CL_OK;
         }
+
         db_close();
     }
     return return_code;

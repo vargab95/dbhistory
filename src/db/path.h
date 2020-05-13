@@ -3,6 +3,7 @@
 
 #include "db/common.h"
 
-extern db_return_codes_t db_get_pathes(const char **pathes);
+extern int db_get_path_count();
+extern db_return_codes_t db_get_pathes(char ***pathes, int *count);
 
 #endif
