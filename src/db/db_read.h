@@ -3,6 +3,6 @@
 
 #include "db/db_common.h"
 
-extern DBReturnCodes db_get_history(const char * path, directory_history_t * history);
+extern DBReturnCodes db_get_history(const char *path, directory_history_t *history);
 
 #endif

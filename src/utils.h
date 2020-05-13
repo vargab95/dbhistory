@@ -1,6 +1,7 @@
 #pragma once
 
-typedef enum {
+typedef enum
+{
     MSG_TRACE = 0,
     MSG_DEBUG,
     MSG_INFO,
@@ -8,4 +9,4 @@ typedef enum {
     MSG_ERROR
 } PrintPriority;
 
-extern void print_message(PrintPriority priority, const char * format, ...);
+extern void print_message(PrintPriority priority, const char *format, ...);

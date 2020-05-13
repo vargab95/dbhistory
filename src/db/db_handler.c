@@ -20,7 +20,8 @@
 #endif
 #include "db/db_handler.h"
 
-extern DBReturnCodes db_connect(const char * db_path) {
+extern DBReturnCodes db_connect(const char *db_path)
+{
     const char create_db_structure_cmd[] = "CREATE TABLE IF NOT EXISTS \
                                             path_map( \
                                                     id INTEGER PRIMARY KEY AUTOINCREMENT,\
@@ -38,23 +39,29 @@ extern DBReturnCodes db_connect(const char * db_path) {
 
     realpath(db_path, absolute_path);
     print_message(MSG_DEBUG, "Trying to open database: %s\n", absolute_path);
-    if (SQLITE_OK != sql_connect(absolute_path, create_db_structure_cmd)) {
+    if (SQLITE_OK != sql_connect(absolute_path, create_db_structure_cmd))
+    {
         return_code = DB_ERROR;
     }
 
     return return_code;
 }
 
-extern DBReturnCodes db_add_record(const char * path, const char * command) {
+extern DBReturnCodes db_add_record(const char *path, const char *command)
+{
     const char insert_path_cmd[] = "INSERT INTO path_map(path) VALUES (\"%s\");";
     const char insert_history_record_cmd[] = "INSERT INTO history(path_id, command) VALUES(%d, \"%s\");";
     uint32_t path_id;
-    if (SQLITE_OK == sql_run_command(NULL, NULL, insert_path_cmd, path)) {
+    if (SQLITE_OK == sql_run_command(NULL, NULL, insert_path_cmd, path))
+    {
         print_message(MSG_DEBUG, "Using last row insert id.\n");
         path_id = sql_get_last_insertion_id();
-    } else {
+    }
+    else
+    {
         path_id = get_path_id(path);
-        if (0 == path_id) {
+        if (0 == path_id)
+        {
             print_message(MSG_ERROR, "Systematic software failure. Unknown path id after insert operation.\n");
             return DB_ERROR;
         }
@@ -62,7 +69,8 @@ extern DBReturnCodes db_add_record(const char * path, const char * command) {
     return sql_run_command(NULL, NULL, insert_history_record_cmd, path_id, command);
 }
 
-extern DBReturnCodes db_close() {
+extern DBReturnCodes db_close()
+{
     print_message(MSG_TRACE, "Closing sql file\n");
     sql_close();
     return DB_SUCCESS;

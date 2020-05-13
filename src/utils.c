@@ -7,26 +7,29 @@
 #include "config.h"
 #include "utils.h"
 
-static const char * errorTypeMapping[] = {
+static const char *errorTypeMapping[] = {
     "TRACE",
     "DEBUG",
     "INFO",
     "WARNING",
-    "ERROR"
-};
+    "ERROR"};
 
 FILE *lfptr = NULL;
 
-extern void print_message(PrintPriority priority, const char * format, ...) {
+extern void print_message(PrintPriority priority, const char *format, ...)
+{
     va_list args;
     time_t timer;
     char buffer[26];
-    struct tm* tm_info;
+    struct tm *tm_info;
 
-    if (priority < MSG_DEBUG) return;
+    if (priority < MSG_DEBUG)
+        return;
 
-    if (!lfptr) lfptr = fopen(DEFAULT_LOG_PATH, "a+");
-    if (lfptr) {
+    if (!lfptr)
+        lfptr = fopen(DEFAULT_LOG_PATH, "a+");
+    if (lfptr)
+    {
         time(&timer);
         tm_info = localtime(&timer);
 
@@ -36,8 +39,9 @@ extern void print_message(PrintPriority priority, const char * format, ...) {
         va_start(args, format);
         vfprintf(lfptr, format, args);
         va_end(args);
-    } else {
+    }
+    else
+    {
         printf("Error during opening log file: %s\n", strerror(errno));
     }
 }
-

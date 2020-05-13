@@ -1,6 +1,7 @@
 #pragma once
 
-typedef enum {
+typedef enum
+{
     CL_MISSING_DAEMON,
     CL_ERROR,
     CL_OK = 0,
@@ -9,6 +10,6 @@ typedef enum {
     CL_INVALID_PATH
 } ClientReturnCodes;
 
-extern ClientReturnCodes client_add_record(const char * command);
-extern ClientReturnCodes client_get_records(const char * path);
-extern ClientReturnCodes client_search_records(const char * pattern);
+extern ClientReturnCodes client_add_record(const char *command);
+extern ClientReturnCodes client_get_records(const char *path);
+extern ClientReturnCodes client_search_records(const char *pattern);

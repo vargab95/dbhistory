@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <limits.h>
+#include <linux/limits.h>
 #include <errno.h>
 #include <string.h>
 
@@ -80,11 +80,11 @@ static void print_records(const directory_history_t *dir_hist)
 {
     char buffer[26];
     const size_t length = sizeof(buffer) / sizeof(buffer[0]);
-    struct tm *tm_info;
 
     for (unsigned int index = 0u; index < dir_hist->length; index++)
     {
         history_record_t *record = &(dir_hist->records[index]);
+        struct tm *tm_info;
 
         memset(buffer, 0, length);
         tm_info = localtime(&record->timestamp);
