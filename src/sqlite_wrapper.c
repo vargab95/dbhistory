@@ -23,7 +23,7 @@ extern int sql_connect(const char *db_path, const char *command)
         }
         else
         {
-            return_code = sql_run_command(NULL, NULL, (char *)command, PATH_MAX, MAX_COMMAND_LENGTH);
+            return_code = sql_run_command(NULL, NULL, (char *)command, PATH_MAX, g_dbhistory_configuration.max_command_length);
         }
     }
 

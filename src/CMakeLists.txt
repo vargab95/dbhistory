@@ -11,6 +11,7 @@ ExternalProject_Add(inih
                     BUILD_COMMAND     ""
                     INSTALL_COMMAND   ""
                     TEST_COMMAND      "")
+include_directories(${CMAKE_BINARY_DIR}/inih-src/)
 
 find_package (SQLite3 REQUIRED)
 
@@ -26,7 +27,9 @@ add_executable (dbhistory
                 ${CMAKE_CURRENT_SOURCE_DIR}/db/db_read_re.c
                 ${CMAKE_CURRENT_SOURCE_DIR}/sqlite_wrapper.c
                 ${CMAKE_CURRENT_SOURCE_DIR}/utils.c
-                ${CMAKE_CURRENT_SOURCE_DIR}/client.c)
+                ${CMAKE_CURRENT_SOURCE_DIR}/client.c
+                ${CMAKE_CURRENT_SOURCE_DIR}/config.c
+                ${CMAKE_BINARY_DIR}/inih-src/ini.c)
 
 add_dependencies(dbhistory inih)
 

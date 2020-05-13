@@ -1,7 +1,18 @@
-#pragma once
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
 
-// TODO Add config file instead of defines
-#define DEFAULT_DATABASE_PATH "/tmp/.dbhistory.sql"
-#define DEFAULT_LOG_PATH "/tmp/.dbhistory.log"
-#define DEFAULT_DAEMON_TICK_TIME 3
-#define MAX_COMMAND_LENGTH 4096
+#include <linux/limits.h>
+
+typedef struct
+{
+    char *database_path;
+    char *log_file_path;
+    unsigned int daemon_tick_time;
+    size_t max_command_length;
+} dbhistory_configuration_t;
+
+extern dbhistory_configuration_t g_dbhistory_configuration;
+
+extern void read_configuration(const char *path);
+
+#endif

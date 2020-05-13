@@ -27,7 +27,7 @@ extern void print_message(PrintPriority priority, const char *format, ...)
         return;
 
     if (!lfptr)
-        lfptr = fopen(DEFAULT_LOG_PATH, "a+");
+        lfptr = fopen(g_dbhistory_configuration.log_file_path, "a+");
     if (lfptr)
     {
         time(&timer);

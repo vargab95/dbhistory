@@ -22,7 +22,7 @@ extern ClientReturnCodes client_add_record(const char *command)
         return CL_INVALID_PATH;
     }
 
-    if (DB_SUCCESS == db_connect(DEFAULT_DATABASE_PATH))
+    if (DB_SUCCESS == db_connect(g_dbhistory_configuration.database_path))
     {
         if (DB_SUCCESS == db_add_record(cwd, command))
         {
@@ -45,7 +45,7 @@ extern ClientReturnCodes client_get_records(const char *path)
         return CL_INVALID_PATH;
     }
 
-    if (DB_SUCCESS == db_connect(DEFAULT_DATABASE_PATH))
+    if (DB_SUCCESS == db_connect(g_dbhistory_configuration.database_path))
     {
         if (DB_SUCCESS == db_get_history(absolute_path, &dir_hist))
         {
@@ -63,7 +63,7 @@ extern ClientReturnCodes client_search_records(const char *pattern)
     directory_history_t dir_hist = {0};
     ClientReturnCodes return_code = CL_ERROR;
 
-    if (DB_SUCCESS == db_connect(DEFAULT_DATABASE_PATH))
+    if (DB_SUCCESS == db_connect(g_dbhistory_configuration.database_path))
     {
         if (DB_SUCCESS == db_search_history(pattern, &dir_hist))
         {

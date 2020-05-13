@@ -23,7 +23,7 @@ extern void daemon_run()
     while (DAEMON_RUN == daemon_state)
     {
         print_message(MSG_TRACE, "Daemon sys tick\n");
-        sleep(DEFAULT_DAEMON_TICK_TIME);
+        sleep(g_dbhistory_configuration.daemon_tick_time);
     }
 }
 
