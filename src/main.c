@@ -1,77 +1,147 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <linux/limits.h>
+#include <pwd.h>
+#include <string.h>
 
 #include "daemon.h"
 #include "client.h"
 #include "utils.h"
+#include "config.h"
 
-typedef enum
+typedef enum return_codes_t
 {
-    EC_INVALID_ARG,
-    EC_MISSING_ARG,
-    EC_SYS_SW_ERR,
-    EC_OK = 0,
-    EC_HELP
-} ReturnCodes;
+    EC_MISSING_CONFIGURATION = -4,
+    EC_INVALID_ARG = -3,
+    EC_MISSING_ARG = -2,
+    EC_SYS_SW_ERR = -1,
+    EC_OK = 0
+} return_codes_t;
+
+typedef enum command_type_t
+{
+    DBHISTORY_NOT_SELECTED = 0,
+    DBHISTORY_LIST,
+    DBHISTORY_ADD,
+    DBHISTORY_SEARCH,
+    DBHISTORY_DAEMON,
+    DBHISTORY_HELP
+} command_type_t;
+
+typedef struct
+{
+    char configuration_file_path[PATH_MAX];
+
+    command_type_t type;
+    union {
+        struct
+        {
+            const char *command;
+        } add;
+        struct
+        {
+            const char *path;
+        } list;
+        struct
+        {
+            const char *pattern;
+        } search;
+        struct
+        {
+            const char *program_name;
+        } help;
+    } argument;
+} dbhistory_command_t;
 
 static void print_help(const char *name);
-static ReturnCodes process_arguments(const int argc, const char **argv);
+static void get_default_config_file_path(char *configuration_file_path);
+static return_codes_t process_arguments(const int argc,
+                                        const char **argv,
+                                        dbhistory_command_t *operation_type);
+static return_codes_t execute_command(const dbhistory_command_t *command);
 
 int main(int argc, const char **argv)
 {
-    ReturnCodes return_code = EC_SYS_SW_ERR;
-    if ((return_code = process_arguments(argc, argv)) != EC_OK)
+    return_codes_t return_code = EC_SYS_SW_ERR;
+    dbhistory_command_t command = {.type = DBHISTORY_NOT_SELECTED};
+
+    get_default_config_file_path(command.configuration_file_path);
+
+    if ((return_code = process_arguments(argc, argv, &command)) != EC_OK)
     {
+        print_message(MSG_ERROR, "Operation failed");
         return return_code;
     }
+
+    if (!read_configuration(command.configuration_file_path))
+    {
+        puts("DBHistory error - Could not read configuration file.");
+        printf("Check %s for more details\n", g_dbhistory_configuration.log_file_path);
+        print_message(MSG_ERROR, "Cannot read configuration file: %s\n", command.configuration_file_path);
+        return EC_MISSING_CONFIGURATION;
+    }
+
+    return_code = execute_command(&command);
 
     return return_code;
 }
 
-static ReturnCodes process_arguments(const int argc, const char **argv)
+static void get_default_config_file_path(char *configuration_file_path)
 {
-    int opt = getopt(argc, (char **)argv, ":a:s:dh");
+    struct passwd *pw = getpwuid(getuid());
+    sprintf(configuration_file_path, "%s/%s", pw->pw_dir, ".dbhistory.ini");
+}
 
-    switch (opt)
+static return_codes_t process_arguments(const int argc,
+                                        const char **argv,
+                                        dbhistory_command_t *command)
+{
+    int opt;
+
+    while (opt = getopt(argc, (char **)argv, "a:s:d:c:h"))
     {
-    /* List directory
-            There is no command line argument so
-            list the history of the current directory. */
-    case -1:
-        print_message(MSG_INFO, "List history of %s directory.\n", (argc > 1) ? argv[1] : "current");
-        client_get_records((argc > 1) ? argv[1] : ".");
-        return EC_OK;
-    case 's':
-        print_message(MSG_INFO, "List history for %s regexp.\n", optarg);
-        client_search_records(optarg);
-        return EC_OK;
-    /* Help */
-    case 'h':
-        print_help(argv[0]);
-        return EC_HELP;
-    /* Daemon
-            Starts a daemon instead of opening sqlite
-            at every run. */
-    case 'd':
-        print_message(MSG_INFO, "Starting daemon\n");
-        daemon_run();
-        return EC_OK;
-    /* Add
-            Add a new record to the history database. */
-    case 'a':
-        print_message(MSG_INFO, "Adding entry %s\n", optarg);
-        client_add_record(optarg);
-        return EC_OK;
-    /* Missing value */
-    case ':':
-        print_message(MSG_INFO, "Missing value.\n");
-        return EC_MISSING_ARG;
-    /* Unknown argument was specified */
-    case '?':
-        print_message(MSG_INFO, "Unknown option: %c\n", optopt);
-        return EC_INVALID_ARG;
+        switch (opt)
+        {
+        case -1:
+            command->type = DBHISTORY_LIST;
+            command->argument.list.path = (argc > 1) ? argv[argc - 1] : ".";
+            return EC_OK;
+
+        case 'c':
+            strcpy(command->configuration_file_path, optarg);
+            break;
+
+        case 's':
+            command->type = DBHISTORY_SEARCH;
+            command->argument.search.pattern = strdup(optarg);
+            return EC_OK;
+
+        case 'h':
+            command->type = DBHISTORY_HELP;
+            command->argument.help.program_name = argv[0];
+            return EC_OK;
+
+        case 'd':
+            command->type = DBHISTORY_DAEMON;
+            return EC_OK;
+
+        case 'a':
+            command->type = DBHISTORY_ADD;
+            command->argument.add.command = strdup(optarg);
+            return EC_OK;
+
+        case ':':
+            print_message(MSG_INFO, "Missing value.\n");
+            return EC_MISSING_ARG;
+
+        case '?':
+            print_message(MSG_INFO, "Unknown option: %c\n", optopt);
+            return EC_INVALID_ARG;
+        }
     }
+
     return EC_SYS_SW_ERR;
 }
 
@@ -84,4 +154,36 @@ static void print_help(const char *name)
            "\t-a Adds the COMMAND to the history db\n"
            "\t-s Search by applying given regex to pathes\n",
            name);
+}
+
+static return_codes_t execute_command(const dbhistory_command_t *command)
+{
+    switch (command->type)
+    {
+    case DBHISTORY_LIST:
+        print_message(MSG_INFO, "List history of %s directory.\n",
+                      (strcmp(".", command->argument.list.path) == 0) ? "current" : command->argument.list.path);
+        client_get_records(command->argument.list.path);
+        break;
+    case DBHISTORY_ADD:
+        print_message(MSG_INFO, "Adding entry %s\n", command->argument.add.command);
+        client_add_record(command->argument.add.command);
+        break;
+    case DBHISTORY_SEARCH:
+        print_message(MSG_INFO, "List history for %s regexp.\n", command->argument.search.pattern);
+        client_search_records(command->argument.search.pattern);
+        break;
+    case DBHISTORY_DAEMON:
+        print_message(MSG_INFO, "Starting daemon\n");
+        daemon_run();
+        break;
+    case DBHISTORY_HELP:
+        print_help(command->argument.help.program_name);
+        break;
+    default:
+        print_message(MSG_ERROR, "%d is an invalid command!", command->type);
+        return EC_SYS_SW_ERR;
+    }
+
+    return EC_OK; // TODO replace with specific return code
 }

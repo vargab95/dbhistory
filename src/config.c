@@ -15,12 +15,15 @@ dbhistory_configuration_t g_dbhistory_configuration = {
 
 static int handler(void *user, const char *section, const char *name, const char *value);
 
-void read_configuration(const char *path)
+int read_configuration(const char *path)
 {
     if (ini_parse(path, handler, &g_dbhistory_configuration) < 0)
     {
         print_message(MSG_ERROR, "Cannot open configuration file %s", path);
+        return 0;
     }
+
+    return 1;
 }
 
 static int handler(void *user, const char *section, const char *name, const char *value)

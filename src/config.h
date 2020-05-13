@@ -13,6 +13,6 @@ typedef struct
 
 extern dbhistory_configuration_t g_dbhistory_configuration;
 
-extern void read_configuration(const char *path);
+extern int read_configuration(const char *path);
 
 #endif

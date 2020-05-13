@@ -24,10 +24,19 @@ extern void print_message(PrintPriority priority, const char *format, ...)
     struct tm *tm_info;
 
     if (priority < MSG_DEBUG)
+    {
         return;
+    }
 
     if (!lfptr)
-        lfptr = fopen(g_dbhistory_configuration.log_file_path, "a+");
+    {
+        lfptr = fopen(g_dbhistory_configuration.log_file_path, "a");
+        if (!lfptr)
+        {
+            printf("Error during opening log file (%s): %s (%d)\n", g_dbhistory_configuration.log_file_path, strerror(errno), errno);
+        }
+    }
+
     if (lfptr)
     {
         time(&timer);
@@ -39,9 +48,5 @@ extern void print_message(PrintPriority priority, const char *format, ...)
         va_start(args, format);
         vfprintf(lfptr, format, args);
         va_end(args);
-    }
-    else
-    {
-        printf("Error during opening log file: %s\n", strerror(errno));
     }
 }
