@@ -37,7 +37,7 @@ extern void print_message(print_priority_t priority, const char *format, ...)
         }
     }
 
-    if (lfptr && (g_dbhistory_configuration.log_level >= priority))
+    if (lfptr && (g_dbhistory_configuration.log_level <= priority))
     {
         time(&timer);
         tm_info = localtime(&timer);

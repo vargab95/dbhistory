@@ -40,6 +40,7 @@ extern db_return_codes_t db_get_pathes(char ***pathes, int *count)
     *pathes = (char **)malloc(sizeof(char *) * *count);
     tmp_pathes = *pathes;
 
+    // TODO Replace SQLITE_OK with DB_SUCCESS
     if (SQLITE_OK != sql_run_command(get_pathes_callback, &tmp_pathes, get_pathes_cmd))
     {
         return DB_ERROR;
