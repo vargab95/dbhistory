@@ -101,7 +101,7 @@ static return_codes_t process_arguments(const int argc,
 {
     int opt;
 
-    while (opt = getopt(argc, (char **)argv, "a:s:d:c:h"))
+    while (opt = getopt(argc, (char **)argv, "a:s:p:c:h"))
     {
         switch (opt)
         {
@@ -124,7 +124,7 @@ static return_codes_t process_arguments(const int argc,
             command->argument.help.program_name = argv[0];
             return EC_OK;
 
-        case 'd':
+        case 'p':
             command->type = DBHISTORY_CLEANER;
             return EC_OK;
 
@@ -150,10 +150,11 @@ static void print_help(const char *name)
 {
     printf("Directory based command history.\n\n"
            "Usage: %s [OPTIONS] [COMMAND]\n"
-           "\t-h Shows this help message\n"
-           "\t-d Starts a history maintainer daemon\n"
-           "\t-a Adds the COMMAND to the history db\n"
-           "\t-s Search by applying given regex to pathes\n",
+           "    -h Shows this help message\n"
+           "    -c Specify configuration file\n"
+           "    -p Cleans up the database\n"
+           "    -a Adds the COMMAND to the history db\n"
+           "    -s Search by applying given regex to pathes\n",
            name);
 }
 
