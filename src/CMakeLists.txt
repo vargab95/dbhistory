@@ -20,7 +20,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable (dbhistory
                 ${CMAKE_CURRENT_SOURCE_DIR}/main.c
-                ${CMAKE_CURRENT_SOURCE_DIR}/daemon.c
+                ${CMAKE_CURRENT_SOURCE_DIR}/cleaner.c
                 ${CMAKE_CURRENT_SOURCE_DIR}/db/handler.c
                 ${CMAKE_CURRENT_SOURCE_DIR}/db/common.c
                 ${CMAKE_CURRENT_SOURCE_DIR}/db/read.c

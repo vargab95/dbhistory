@@ -6,7 +6,7 @@
 #include <pwd.h>
 #include <string.h>
 
-#include "daemon.h"
+#include "cleaner.h"
 #include "client.h"
 #include "utils.h"
 #include "config.h"
@@ -26,7 +26,7 @@ typedef enum command_type_t
     DBHISTORY_LIST,
     DBHISTORY_ADD,
     DBHISTORY_SEARCH,
-    DBHISTORY_DAEMON,
+    DBHISTORY_CLEANER,
     DBHISTORY_HELP
 } command_type_t;
 
@@ -35,7 +35,8 @@ typedef struct
     char configuration_file_path[PATH_MAX];
 
     command_type_t type;
-    union {
+    union
+    {
         struct
         {
             const char *command;
@@ -124,7 +125,7 @@ static return_codes_t process_arguments(const int argc,
             return EC_OK;
 
         case 'd':
-            command->type = DBHISTORY_DAEMON;
+            command->type = DBHISTORY_CLEANER;
             return EC_OK;
 
         case 'a':
@@ -173,9 +174,9 @@ static return_codes_t execute_command(const dbhistory_command_t *command)
         print_message(MSG_INFO, "List history for %s regexp.\n", command->argument.search.pattern);
         client_search_records(command->argument.search.pattern);
         break;
-    case DBHISTORY_DAEMON:
-        print_message(MSG_INFO, "Starting daemon\n");
-        daemon_run();
+    case DBHISTORY_CLEANER:
+        print_message(MSG_INFO, "Starting cleaner\n");
+        cleaner_run();
         break;
     case DBHISTORY_HELP:
         print_help(command->argument.help.program_name);

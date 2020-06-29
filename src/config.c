@@ -10,7 +10,7 @@
 dbhistory_configuration_t g_dbhistory_configuration = {
     .database_path = "/tmp/.dbhistory.sql",
     .log_file_path = "/tmp/.dbhistory.log",
-    .daemon_tick_time = 10,
+    .deletion_time_threshold = -1,
     .max_command_length = 4096,
     .log_level = MSG_INFO};
 
@@ -39,9 +39,9 @@ static int handler(void *user, const char *section, const char *name, const char
     {
         config->log_file_path = strdup(value);
     }
-    else if (strcmp(name, "daemon_tick_time") == 0)
+    else if (strcmp(name, "deletion_time_threshold") == 0)
     {
-        config->daemon_tick_time = atoi(value);
+        config->deletion_time_threshold = atoi(value);
     }
     else if (strcmp(name, "max_command_length") == 0)
     {
