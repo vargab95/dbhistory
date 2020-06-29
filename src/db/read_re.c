@@ -84,17 +84,19 @@ extern db_return_codes_t db_search_history(const char *path, directory_history_t
         return DB_EMPTY;
     }
 
-    filter.path_id_list = (int *)malloc(sizeof(int *) * path_cnt);
+    filter.path_id_list = (int *)malloc(sizeof(int) * path_cnt);
     filter.last_id = 0;
     if (regcomp(&filter.regex, path, REG_EXTENDED | REG_NOSUB) != 0)
     {
         print_message(MSG_ERROR, "Invalid regexp: %s\n", path);
+        free(filter.path_id_list);
         return DB_ERROR;
     }
 
     if (SQLITE_OK != sql_run_command(get_path_callback, &filter, get_path_cmd, NULL))
     {
         print_message(MSG_ERROR, "Error while getting matching pathes\n");
+        free(filter.path_id_list);
         return DB_ERROR;
     }
     regfree(&filter.regex);
@@ -102,6 +104,7 @@ extern db_return_codes_t db_search_history(const char *path, directory_history_t
     if (filter.last_id <= 0)
     {
         print_message(MSG_ERROR, "No matching path.\n");
+        free(filter.path_id_list);
         return DB_EMPTY;
     }
 
@@ -114,11 +117,11 @@ extern db_return_codes_t db_search_history(const char *path, directory_history_t
         sprintf(get_record_count_cmd, "SELECT count(*) FROM history WHERE path_id IN (%d", filter.path_id_list[0]);
         for (int i = 1; i < filter.last_id - 2; ++i)
         {
-            sprintf(get_records_cmd, "%s, %d", get_records_cmd, filter.path_id_list[i]);
-            sprintf(get_record_count_cmd, "%s, %d", get_record_count_cmd, filter.path_id_list[i]);
+            sprintf(get_records_cmd, "%s, %d", strdup(get_records_cmd), filter.path_id_list[i]);
+            sprintf(get_record_count_cmd, "%s, %d", strdup(get_record_count_cmd), filter.path_id_list[i]);
         }
-        sprintf(get_records_cmd, "%s, %d);", get_records_cmd, filter.path_id_list[filter.last_id - 1]);
-        sprintf(get_record_count_cmd, "%s, %d);", get_record_count_cmd, filter.path_id_list[filter.last_id - 1]);
+        sprintf(get_records_cmd, "%s, %d);", strdup(get_records_cmd), filter.path_id_list[filter.last_id - 1]);
+        sprintf(get_record_count_cmd, "%s, %d);", strdup(get_record_count_cmd), filter.path_id_list[filter.last_id - 1]);
     }
     else
     {

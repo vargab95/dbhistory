@@ -101,7 +101,7 @@ static return_codes_t process_arguments(const int argc,
 {
     int opt;
 
-    while (opt = getopt(argc, (char **)argv, "a:s:p:c:h"))
+    while (opt = getopt(argc, (char **)argv, "a:s:pc:h"))
     {
         switch (opt)
         {

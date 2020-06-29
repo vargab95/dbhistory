@@ -23,11 +23,6 @@ extern void print_message(print_priority_t priority, const char *format, ...)
     char buffer[26];
     struct tm *tm_info;
 
-    if (priority < MSG_DEBUG)
-    {
-        return;
-    }
-
     if (!lfptr)
     {
         lfptr = fopen(g_dbhistory_configuration.log_file_path, "a");

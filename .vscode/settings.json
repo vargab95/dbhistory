@@ -9,6 +9,7 @@
         "memory": "c",
         "new": "c",
         "functional": "c",
-        "algorithm": "c"
+        "algorithm": "c",
+        "random": "c"
     }
 }
