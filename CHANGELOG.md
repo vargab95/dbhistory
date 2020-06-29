@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - Data gathering was implemented
 - Simple queries were implemented
+- Regex query was implemented
+- Clean up operation was implemented
 
 ### Changed
 
