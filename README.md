@@ -26,6 +26,10 @@ Add to the end of .bashrc.
 
 ### Configuration file
 
+The configuration file shall be in INI format.
+The path of the configuration file can be specified (see in the Command line arguments section).
+By default, the configuration file path is \$HOME/.dbhistory.ini
+
 #### database_path
 
 Specifies the path where the SQLite database will be stored.
