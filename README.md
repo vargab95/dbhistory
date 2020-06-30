@@ -75,4 +75,4 @@ The default value is INFO (2).
 - -c Specify configuration file
 - -p Cleans up the database
 - -a Adds the COMMAND to the history db
-- -s Search by applying given regex to pathes\
+- -s Search by applying given regex to pathes
