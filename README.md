@@ -1,6 +1,6 @@
 # DBHistory
 
-Directory based history
+Directory based history is a tool to maintain a database of command line events in a filterable manner.
 
 ## Build and install
 
@@ -18,7 +18,7 @@ sudo make install
 
 #### Bash
 
-Add to the end of .bashrc
+Add to the end of .bashrc.
 
 ```
   trap 'dbhistory -a "$BASH_COMMAND"' DEBUG
@@ -28,18 +28,47 @@ Add to the end of .bashrc
 
 #### database_path
 
+Specifies the path where the SQLite database will be stored.
+
+Default value is /tmp/.dbhistory.sql
+
 #### log_file_path
+
+Specifies the path where the logs will be stored.
+
+Default value is /tmp/.dbhistory.log
 
 #### deletion_time_threshold
 
+Time threshold for deleting old history records.
+The unit is second.
+
+The default value is -1 which means, there is no time threshold for all entries.
+
 #### max_command_length
+
+Specifies the maximum length of a command which can be stored.
+
+Default is 4096.
 
 #### log_level
 
+Specifies the log level to be used.
+
+The following values can be used:
+
+- 0 = TRACE
+- 1 = DEBUG
+- 2 = INFO
+- 3 = WARNING
+- 4 = ERROR
+
+The default value is INFO (2).
+
 ### Command line arguments
 
--h Shows this help message
--c Specify configuration file
--p Cleans up the database
--a Adds the COMMAND to the history db
--s Search by applying given regex to pathes\
+- -h Shows this help message
+- -c Specify configuration file
+- -p Cleans up the database
+- -a Adds the COMMAND to the history db
+- -s Search by applying given regex to pathes\
