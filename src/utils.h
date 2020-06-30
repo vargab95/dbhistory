@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __UTILS_H__
+#define __UTILS_H__
 
 typedef enum
 {
@@ -10,3 +11,5 @@ typedef enum
 } print_priority_t;
 
 extern void print_message(print_priority_t priority, const char *format, ...);
+
+#endif

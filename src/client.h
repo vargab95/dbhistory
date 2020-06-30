@@ -3,8 +3,7 @@
 
 typedef enum
 {
-    CL_MISSING_DAEMON,
-    CL_ERROR,
+    CL_ERROR = -1,
     CL_OK = 0,
     CL_EMPTY,
     CL_INVALID_INPUT,
