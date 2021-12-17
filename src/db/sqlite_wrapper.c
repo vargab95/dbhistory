@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "../config.h"
 #include "../utils.h"
@@ -36,7 +37,9 @@ extern int sql_run_command(int (*callback)(void *, int, char **, char **), void 
     va_list args;
     int rc;
     char *zErrMsg = 0;
-    char buffer[1024] = {0};
+    char *buffer;
+
+    buffer = malloc(strlen(command) + 2048);
 
     va_start(args, command);
     vsprintf(buffer, command, args);
@@ -49,6 +52,9 @@ extern int sql_run_command(int (*callback)(void *, int, char **, char **), void 
         print_message(MSG_ERROR, "SQL error: %s\n", zErrMsg);
         sqlite3_free(zErrMsg);
     }
+
+    free(buffer);
+
     return rc;
 }
 

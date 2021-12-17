@@ -57,6 +57,7 @@ int read_configuration(const char *path)
             continue;
         }
 
+        tmp = getc(fp);
         for (i = 0; i < PATH_MAX && tmp != '\n' && !feof(fp); ++i)
         {
             value[i] = tmp;
