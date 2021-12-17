@@ -1,14 +1,14 @@
+#include <errno.h>
+#include <linux/limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <linux/limits.h>
-#include <errno.h>
 #include <string.h>
+#include <unistd.h>
 
-#include "config.h"
-#include "utils.h"
 #include "client.h"
+#include "config.h"
 #include "db/handler.h"
+#include "utils.h"
 
 static void print_records(const directory_history_t *dir_hist);
 

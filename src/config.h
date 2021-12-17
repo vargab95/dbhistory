@@ -1,9 +1,9 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
+#include <linux/limits.h>
 #include <stdlib.h>
 #include <time.h>
-#include <linux/limits.h>
 
 #include "utils.h"
 

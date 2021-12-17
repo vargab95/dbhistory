@@ -3,10 +3,10 @@
 #define __USE_XOPEN
 #include <time.h>
 
-#include "config.h"
 #include "cleaner.h"
-#include "utils.h"
+#include "config.h"
 #include "sqlite_wrapper.h"
+#include "utils.h"
 
 #include "db/handler.h"
 #include "db/path.h"
@@ -121,11 +121,13 @@ static int delete_old_records_callback(void *data, int argc, char **argv, char *
     time(&current_time);
 
     print_message(MSG_TRACE, "Testing timestamp\n");
-    print_message(MSG_DEBUG, "Current time %d, threshold %d, record timestamp %d\n", current_time, g_dbhistory_configuration.deletion_time_threshold, record_timestamp);
+    print_message(MSG_DEBUG, "Current time %d, threshold %d, record timestamp %d\n", current_time,
+                  g_dbhistory_configuration.deletion_time_threshold, record_timestamp);
     if ((current_time - g_dbhistory_configuration.deletion_time_threshold) >= record_timestamp)
     {
         print_message(MSG_WARNING, "Record %d is out of date\n", record_id);
-        if (SQLITE_OK != sql_run_command(delete_old_records_callback, NULL, "DELETE FROM history WHERE id=%d;", record_id))
+        if (SQLITE_OK !=
+            sql_run_command(delete_old_records_callback, NULL, "DELETE FROM history WHERE id=%d;", record_id))
         {
             print_message(MSG_ERROR, "Couldn't delete record %d!\n", record_id);
             return 0;

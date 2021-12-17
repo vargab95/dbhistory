@@ -1,18 +1,13 @@
-#include <stdio.h>
-#include <stdarg.h>
-#include <time.h>
 #include <errno.h>
+#include <stdarg.h>
+#include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include "config.h"
 #include "utils.h"
 
-static const char *errorTypeMapping[] = {
-    "TRACE",
-    "DEBUG",
-    "INFO",
-    "WARNING",
-    "ERROR"};
+static const char *errorTypeMapping[] = {"TRACE", "DEBUG", "INFO", "WARNING", "ERROR"};
 
 FILE *lfptr = NULL;
 
@@ -28,7 +23,8 @@ extern void print_message(print_priority_t priority, const char *format, ...)
         lfptr = fopen(g_dbhistory_configuration.log_file_path, "a");
         if (!lfptr)
         {
-            printf("Error during opening log file (%s): %s (%d)\n", g_dbhistory_configuration.log_file_path, strerror(errno), errno);
+            printf("Error during opening log file (%s): %s (%d)\n", g_dbhistory_configuration.log_file_path,
+                   strerror(errno), errno);
         }
     }
 

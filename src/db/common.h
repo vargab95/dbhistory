@@ -1,8 +1,8 @@
 #ifndef __DB_COMMON_H__
 #define __DB_COMMON_H__
 
-#include <time.h>
 #include <stdint.h>
+#include <time.h>
 
 typedef enum
 {
@@ -26,9 +26,6 @@ typedef struct
 
 extern uint32_t get_path_id(const char *path);
 extern int get_record_count(int path_id);
-extern void copy_history_record(history_record_t *record,
-                                const char *path,
-                                const char *command,
-                                const char *time);
+extern void copy_history_record(history_record_t *record, const char *path, const char *command, const char *time);
 
 #endif

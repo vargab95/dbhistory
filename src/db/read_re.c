@@ -1,16 +1,16 @@
+#include <regex.h>
+#include <sqlite3.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sqlite3.h>
-#include <regex.h>
 
 #define __USE_XOPEN
 #include <time.h>
 
-#include "utils.h"
-#include "sqlite_wrapper.h"
 #include "db/common.h"
 #include "db/read.h"
+#include "sqlite_wrapper.h"
+#include "utils.h"
 
 typedef struct
 {
@@ -113,7 +113,10 @@ extern db_return_codes_t db_search_history(const char *path, directory_history_t
     get_record_count_cmd = (char *)malloc(sizeof(char) * 10 * path_cnt + 500);
     if (filter.last_id > 1)
     {
-        sprintf(get_records_cmd, "SELECT path, command, timestamp FROM history INNER JOIN path_map ON path_map.id = history.path_id WHERE path_id IN (%d", filter.path_id_list[0]);
+        sprintf(get_records_cmd,
+                "SELECT path, command, timestamp FROM history INNER JOIN path_map ON path_map.id = history.path_id "
+                "WHERE path_id IN (%d",
+                filter.path_id_list[0]);
         sprintf(get_record_count_cmd, "SELECT count(*) FROM history WHERE path_id IN (%d", filter.path_id_list[0]);
         for (int i = 1; i < filter.last_id - 2; ++i)
         {
@@ -121,11 +124,15 @@ extern db_return_codes_t db_search_history(const char *path, directory_history_t
             sprintf(get_record_count_cmd, "%s, %d", strdup(get_record_count_cmd), filter.path_id_list[i]);
         }
         sprintf(get_records_cmd, "%s, %d);", strdup(get_records_cmd), filter.path_id_list[filter.last_id - 1]);
-        sprintf(get_record_count_cmd, "%s, %d);", strdup(get_record_count_cmd), filter.path_id_list[filter.last_id - 1]);
+        sprintf(get_record_count_cmd, "%s, %d);", strdup(get_record_count_cmd),
+                filter.path_id_list[filter.last_id - 1]);
     }
     else
     {
-        sprintf(get_records_cmd, "SELECT path, command, timestamp FROM history INNER JOIN path_map ON path_map.id = history.path_id WHERE path_id IN (%d);", filter.path_id_list[0]);
+        sprintf(get_records_cmd,
+                "SELECT path, command, timestamp FROM history INNER JOIN path_map ON path_map.id = history.path_id "
+                "WHERE path_id IN (%d);",
+                filter.path_id_list[0]);
         sprintf(get_record_count_cmd, "SELECT count(*) FROM history WHERE path_id IN (%d);", filter.path_id_list[0]);
     }
     print_message(MSG_DEBUG, "Regex based record list command: %s\n", get_records_cmd);

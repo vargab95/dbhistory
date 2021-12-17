@@ -1,11 +1,11 @@
-#include <stdio.h>
+#include <linux/limits.h>
+#include <sqlite3.h>
 #include <stdarg.h>
 #include <stddef.h>
-#include <sqlite3.h>
-#include <linux/limits.h>
+#include <stdio.h>
 
-#include "sqlite_wrapper.h"
 #include "config.h"
+#include "sqlite_wrapper.h"
 #include "utils.h"
 
 static sqlite3 *db;
@@ -23,18 +23,15 @@ extern int sql_connect(const char *db_path, const char *command)
         }
         else
         {
-            return_code = sql_run_command(NULL, NULL, (char *)command, PATH_MAX, g_dbhistory_configuration.max_command_length);
+            return_code =
+                sql_run_command(NULL, NULL, (char *)command, PATH_MAX, g_dbhistory_configuration.max_command_length);
         }
     }
 
     return return_code;
 }
 
-extern int sql_run_command(
-    int (*callback)(void *, int, char **, char **),
-    void *data,
-    const char *command,
-    ...)
+extern int sql_run_command(int (*callback)(void *, int, char **, char **), void *data, const char *command, ...)
 {
     va_list args;
     int rc;

@@ -1,14 +1,14 @@
+#include <sqlite3.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sqlite3.h>
 
 #define __USE_XOPEN
 #include <time.h>
 
-#include "utils.h"
-#include "sqlite_wrapper.h"
 #include "db/common.h"
 #include "db/read.h"
+#include "sqlite_wrapper.h"
+#include "utils.h"
 
 static int get_records_callback(void *data, int argc, char **argv, char **col_names);
 
@@ -31,7 +31,8 @@ extern db_return_codes_t db_get_history(const char *path, directory_history_t *h
     }
     else
     {
-        const char get_records_cmd[] = "SELECT path, command, timestamp FROM history INNER JOIN path_map ON path_map.id = history.path_id WHERE path_id = %d;";
+        const char get_records_cmd[] = "SELECT path, command, timestamp FROM history INNER JOIN path_map ON "
+                                       "path_map.id = history.path_id WHERE path_id = %d;";
         int record_cnt = get_record_count(path_id);
 
         if (0 >= record_cnt)

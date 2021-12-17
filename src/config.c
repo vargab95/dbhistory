@@ -7,12 +7,11 @@
 
 #include "config.h"
 
-dbhistory_configuration_t g_dbhistory_configuration = {
-    .database_path = "/tmp/.dbhistory.sql",
-    .log_file_path = "/tmp/.dbhistory.log",
-    .deletion_time_threshold = -1,
-    .max_command_length = 4096,
-    .log_level = MSG_INFO};
+dbhistory_configuration_t g_dbhistory_configuration = {.database_path = "/tmp/.dbhistory.sql",
+                                                       .log_file_path = "/tmp/.dbhistory.log",
+                                                       .deletion_time_threshold = -1,
+                                                       .max_command_length = 4096,
+                                                       .log_level = MSG_INFO};
 
 static int handler(void *user, const char *section, const char *name, const char *value);
 

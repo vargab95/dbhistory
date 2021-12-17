@@ -1,14 +1,14 @@
+#include <sqlite3.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sqlite3.h>
 
 #define __USE_XOPEN
 #include <time.h>
 
-#include "utils.h"
-#include "sqlite_wrapper.h"
 #include "db/common.h"
 #include "db/path.h"
+#include "sqlite_wrapper.h"
+#include "utils.h"
 
 static int get_pathes_callback(void *data, int argc, char **argv, char **col_names);
 static int get_path_count_callback(void *data, int argc, char **argv, char **col_names);

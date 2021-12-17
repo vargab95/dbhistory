@@ -1,15 +1,15 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
 #include <linux/limits.h>
 #include <pwd.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "cleaner.h"
 #include "client.h"
-#include "utils.h"
 #include "config.h"
+#include "utils.h"
 
 typedef enum return_codes_t
 {
@@ -58,9 +58,7 @@ typedef struct
 
 static void print_help(const char *name);
 static void get_default_config_file_path(char *configuration_file_path);
-static return_codes_t process_arguments(const int argc,
-                                        const char **argv,
-                                        dbhistory_command_t *operation_type);
+static return_codes_t process_arguments(const int argc, const char **argv, dbhistory_command_t *operation_type);
 static return_codes_t execute_command(const dbhistory_command_t *command);
 
 int main(int argc, const char **argv)
@@ -95,9 +93,7 @@ static void get_default_config_file_path(char *configuration_file_path)
     sprintf(configuration_file_path, "%s/%s", pw->pw_dir, ".dbhistory.ini");
 }
 
-static return_codes_t process_arguments(const int argc,
-                                        const char **argv,
-                                        dbhistory_command_t *command)
+static return_codes_t process_arguments(const int argc, const char **argv, dbhistory_command_t *command)
 {
     int opt;
 

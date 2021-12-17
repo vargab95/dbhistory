@@ -7,9 +7,9 @@
 #include <linux/limits.h>
 #include <sqlite3.h>
 
-#include "utils.h"
-#include "sqlite_wrapper.h"
 #include "common.h"
+#include "sqlite_wrapper.h"
+#include "utils.h"
 
 static int get_path_id_callback(void *data, int argc, char **argv, char **col_names);
 static int get_record_count_callback(void *data, int argc, char **argv, char **col_names);
@@ -58,10 +58,7 @@ static int get_path_id_callback(void *data, int argc, char **argv, char **col_na
     return 0;
 }
 
-extern void copy_history_record(history_record_t *record,
-                                const char *path,
-                                const char *command,
-                                const char *time)
+extern void copy_history_record(history_record_t *record, const char *path, const char *command, const char *time)
 {
     size_t str_size;
     struct tm tm;

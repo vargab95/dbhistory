@@ -1,18 +1,18 @@
+#include <errno.h>
+#include <linux/limits.h>
+#include <sqlite3.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
-#include <errno.h>
 #include <string.h>
-#include <sqlite3.h>
-#include <linux/limits.h>
 
 #define __USE_XOPEN
 #include <time.h>
 
-#include "utils.h"
 #include "config.h"
-#include "sqlite_wrapper.h"
 #include "db/common.h"
+#include "sqlite_wrapper.h"
+#include "utils.h"
 #ifdef DBHISTORY_USE_REGEX
 #include "db/read_re.h"
 #else
