@@ -5,11 +5,11 @@
 
 #include "cleaner.h"
 #include "config.h"
-#include "sqlite_wrapper.h"
 #include "utils.h"
 
 #include "db/handler.h"
 #include "db/path.h"
+#include "db/sqlite_wrapper.h"
 
 static void check_non_referenced_path(const char *path);
 static void check_non_existing_path(const char *path);

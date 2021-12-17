@@ -4,9 +4,9 @@
 #include <stddef.h>
 #include <stdio.h>
 
-#include "config.h"
+#include "../config.h"
+#include "../utils.h"
 #include "sqlite_wrapper.h"
-#include "utils.h"
 
 static sqlite3 *db;
 static unsigned int last_id = 0;

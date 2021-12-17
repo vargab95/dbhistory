@@ -1,11 +1,14 @@
+#include <ctype.h>
+#include <linux/limits.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "ini.h"
 
 #include "utils.h"
 
 #include "config.h"
+
+#define MAX_PARAMETER_NAME_LENGTH 32
 
 dbhistory_configuration_t g_dbhistory_configuration = {.database_path = "/tmp/.dbhistory.sql",
                                                        .log_file_path = "/tmp/.dbhistory.log",
@@ -13,38 +16,91 @@ dbhistory_configuration_t g_dbhistory_configuration = {.database_path = "/tmp/.d
                                                        .max_command_length = 4096,
                                                        .log_level = MSG_INFO};
 
-static int handler(void *user, const char *section, const char *name, const char *value);
+static int set_parameter(const char *name, const char *value);
+static void go_to_next_line(FILE *fp);
 
 int read_configuration(const char *path)
 {
-    if (ini_parse(path, handler, &g_dbhistory_configuration) < 0)
+    char tmp;
+    char name[MAX_PARAMETER_NAME_LENGTH], value[PATH_MAX];
+    FILE *fp;
+
+    fp = fopen(path, "r");
+
+    if (fp == NULL)
     {
         print_message(MSG_ERROR, "Cannot open configuration file %s", path);
         return 0;
     }
 
+    while (!feof(fp))
+    {
+        int i;
+
+        tmp = getc(fp);
+        if (!isalpha(tmp))
+        {
+            go_to_next_line(fp);
+            tmp = getc(fp);
+        }
+
+        for (i = 0; i < MAX_PARAMETER_NAME_LENGTH && tmp != '=' && !feof(fp); ++i)
+        {
+            name[i] = tmp;
+            tmp = getc(fp);
+        }
+        name[i + 1] = '\0';
+
+        if (tmp != '=')
+        {
+            go_to_next_line(fp);
+            continue;
+        }
+
+        for (i = 0; i < PATH_MAX && tmp != '\n' && !feof(fp); ++i)
+        {
+            value[i] = tmp;
+            tmp = getc(fp);
+        }
+        value[i + 1] = '\0';
+
+        if (tmp != '\n' && !feof(fp))
+        {
+            go_to_next_line(fp);
+            continue;
+        }
+
+        set_parameter(name, value);
+    }
+
+    fclose(fp);
+
     return 1;
 }
 
-static int handler(void *user, const char *section, const char *name, const char *value)
+static void go_to_next_line(FILE *fp)
 {
-    dbhistory_configuration_t *config = (dbhistory_configuration_t *)user;
+    while (!(feof(fp) || (getc(fp) == '\n')))
+        ;
+}
 
+static int set_parameter(const char *name, const char *value)
+{
     if (strcmp(name, "database_path") == 0)
     {
-        config->database_path = strdup(value);
+        g_dbhistory_configuration.database_path = strdup(value);
     }
     else if (strcmp(name, "log_file_path") == 0)
     {
-        config->log_file_path = strdup(value);
+        g_dbhistory_configuration.log_file_path = strdup(value);
     }
     else if (strcmp(name, "deletion_time_threshold") == 0)
     {
-        config->deletion_time_threshold = atoi(value);
+        g_dbhistory_configuration.deletion_time_threshold = atoi(value);
     }
     else if (strcmp(name, "max_command_length") == 0)
     {
-        config->max_command_length = atoi(value);
+        g_dbhistory_configuration.max_command_length = atoi(value);
     }
     else if (strcmp(name, "log_level") == 0)
     {
@@ -55,7 +111,7 @@ static int handler(void *user, const char *section, const char *name, const char
         }
         else
         {
-            config->log_level = log_level;
+            g_dbhistory_configuration.log_level = log_level;
         }
     }
     else
