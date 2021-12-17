@@ -108,32 +108,42 @@ extern db_return_codes_t db_search_history(const char *path, directory_history_t
         return DB_EMPTY;
     }
 
-    // TODO Shall be refactored
-    get_records_cmd = (char *)malloc(sizeof(char) * 10 * path_cnt + 1000);
-    get_record_count_cmd = (char *)malloc(sizeof(char) * 10 * path_cnt + 500);
     if (filter.last_id > 1)
     {
-        sprintf(get_records_cmd,
-                "SELECT path, command, timestamp FROM history INNER JOIN path_map ON path_map.id = history.path_id "
-                "WHERE path_id IN (%d",
-                filter.path_id_list[0]);
-        sprintf(get_record_count_cmd, "SELECT count(*) FROM history WHERE path_id IN (%d", filter.path_id_list[0]);
-        for (int i = 1; i < filter.last_id - 2; ++i)
+        const char *command_format = "SELECT path, command, timestamp FROM history "
+                                     "INNER JOIN path_map ON path_map.id = history.path_id "
+                                     "WHERE path_id IN (";
+        const char *count_command_format = "SELECT count(*) FROM history WHERE path_id IN (";
+        char path_id_buffer[32];
+
+        get_records_cmd = (char *)malloc(sizeof(char) * 12 * path_cnt + strlen(command_format) + 3);
+        get_record_count_cmd = (char *)malloc(sizeof(char) * 12 * path_cnt + strlen(count_command_format) + 3);
+
+        strcpy(get_records_cmd, command_format);
+        strcpy(get_record_count_cmd, count_command_format);
+
+        for (int i = 0; i < filter.last_id - 1; ++i)
         {
-            sprintf(get_records_cmd, "%s, %d", strdup(get_records_cmd), filter.path_id_list[i]);
-            sprintf(get_record_count_cmd, "%s, %d", strdup(get_record_count_cmd), filter.path_id_list[i]);
+            sprintf(path_id_buffer, (i == 0) ? "%10d" : ", %10d", filter.path_id_list[i]);
+            strcat(get_records_cmd, path_id_buffer);
+            strcat(get_record_count_cmd, path_id_buffer);
         }
-        sprintf(get_records_cmd, "%s, %d);", strdup(get_records_cmd), filter.path_id_list[filter.last_id - 1]);
-        sprintf(get_record_count_cmd, "%s, %d);", strdup(get_record_count_cmd),
-                filter.path_id_list[filter.last_id - 1]);
+
+        strcat(get_records_cmd, ");");
+        strcat(get_record_count_cmd, ");");
     }
     else
     {
-        sprintf(get_records_cmd,
-                "SELECT path, command, timestamp FROM history INNER JOIN path_map ON path_map.id = history.path_id "
-                "WHERE path_id IN (%d);",
-                filter.path_id_list[0]);
-        sprintf(get_record_count_cmd, "SELECT count(*) FROM history WHERE path_id IN (%d);", filter.path_id_list[0]);
+        const char *get_records_command_format = "SELECT path, command, timestamp FROM history "
+                                                 "INNER JOIN path_map ON path_map.id = history.path_id "
+                                                 "WHERE path_id IN (%10d);";
+        const char *get_records_command_count_format = "SELECT count(*) FROM history WHERE path_id IN (%10d);";
+
+        get_records_cmd = (char *)malloc(sizeof(char) * strlen(get_records_command_format) + 10);
+        get_record_count_cmd = (char *)malloc(sizeof(char) * strlen(get_records_command_count_format) + 10);
+
+        sprintf(get_records_cmd, get_records_command_format, filter.path_id_list[0]);
+        sprintf(get_record_count_cmd, get_records_command_count_format, filter.path_id_list[0]);
     }
     print_message(MSG_DEBUG, "Regex based record list command: %s\n", get_records_cmd);
     free(filter.path_id_list);
