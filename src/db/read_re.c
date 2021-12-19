@@ -7,8 +7,8 @@
 #define __USE_XOPEN
 #include <time.h>
 
-#include "db/common.h"
-#include "db/read.h"
+#include "./common.h"
+#include "./read.h"
 #include "sqlite_wrapper.h"
 #include "utils.h"
 

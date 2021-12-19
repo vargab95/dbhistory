@@ -7,9 +7,9 @@
 #include <linux/limits.h>
 #include <sqlite3.h>
 
+#include "../utils.h"
 #include "common.h"
 #include "sqlite_wrapper.h"
-#include "utils.h"
 
 static int get_path_id_callback(void *data, int argc, char **argv, char **col_names);
 static int get_record_count_callback(void *data, int argc, char **argv, char **col_names);
@@ -28,12 +28,13 @@ extern int get_record_count(int path_id)
 extern uint32_t get_path_id(const char *path)
 {
     const char get_path_id_cmd[] = "SELECT * FROM path_map WHERE path = \"%s\" LIMIT 1;";
-    char buffer[sizeof(get_path_id_cmd) + PATH_MAX] = {0};
     int path_id = 0;
+
     if (sql_run_command(get_path_id_callback, &path_id, get_path_id_cmd, path) != SQLITE_OK)
     {
         print_message(MSG_ERROR, "Cannot find id for path %s\n", path);
     }
+
     return path_id;
 }
 

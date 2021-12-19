@@ -49,7 +49,7 @@ int read_configuration(const char *path)
             name[i] = tmp;
             tmp = getc(fp);
         }
-        name[i + 1] = '\0';
+        name[i] = '\0';
 
         if (tmp != '=')
         {
@@ -63,7 +63,7 @@ int read_configuration(const char *path)
             value[i] = tmp;
             tmp = getc(fp);
         }
-        value[i + 1] = '\0';
+        value[i] = '\0';
 
         if (tmp != '\n' && !feof(fp))
         {

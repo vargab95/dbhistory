@@ -52,6 +52,9 @@ extern db_return_codes_t db_add_record(const char *path, const char *command)
     const char insert_path_cmd[] = "INSERT INTO path_map(path) VALUES (\"%s\");";
     const char insert_history_record_cmd[] = "INSERT INTO history(path_id, command) VALUES(%d, \"%s\");";
     uint32_t path_id;
+    char *escaped_command, *ecptr;
+    int result;
+
     if (SQLITE_OK == sql_run_command(NULL, NULL, insert_path_cmd, path))
     {
         print_message(MSG_DEBUG, "Using last row insert id.\n");
@@ -66,7 +69,31 @@ extern db_return_codes_t db_add_record(const char *path, const char *command)
             return DB_ERROR;
         }
     }
-    return sql_run_command(NULL, NULL, insert_history_record_cmd, path_id, command);
+
+    ecptr = escaped_command = malloc(strlen(command) * 2);
+    for (const char *cptr = command; *cptr; ++cptr)
+    {
+        switch (*cptr)
+        {
+        case '"':
+            *ecptr = '"';
+            ++ecptr;
+            *ecptr = '"';
+            ++ecptr;
+            break;
+        default:
+            *ecptr = *cptr;
+            ++ecptr;
+            break;
+        }
+    }
+    *ecptr = '\0';
+
+    result = sql_run_command(NULL, NULL, insert_history_record_cmd, path_id, escaped_command);
+
+    free(escaped_command);
+
+    return result;
 }
 
 extern db_return_codes_t db_close()
