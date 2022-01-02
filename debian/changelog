@@ -1,10 +1,16 @@
+dbhistory (1.0.1) focal; urgency=low
+
+  * Remove 0ppa0 extension
+
+ -- Balázs János Varga <vargab95@gmail.com>  Sun, 02 Jan 2022 22:59:33 +0100
+
 dbhistory (1.0.1-0ppa0) focal; urgency=low
 
   * Fix TODOs
   * Use ~/.dbhistory.db as the default database path
   * Use ~/.dbhistory.log as the default log file path
 
- -- Balázs János Varga <vargab95@gmail.com>  Sun, 02 Jan 2022 22:12:32 +0100
+ -- Balázs János Varga <vargab95@gmail.com>  Sun, 02 Jan 2022 22:12:33 +0100
 
 dbhistory (1.0.0-0ppa0) focal; urgency=low
 
