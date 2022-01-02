@@ -1,0 +1,12 @@
+Source: dbhistory
+Section: devel
+Priority: optional
+Maintainer: Balázs János Varga <vargab95@gmail.com>
+Build-Depends: cmake, build-essential, libsqlite3-dev
+Homepage: https://www.vargary.hu
+
+Package: dbhistory
+Architecture: any
+Depends:
+Description: Directory based bash history
+  History of bash commands executed by the user, stored with the directory of execution. It helps in cases when a user works on multiple projects in parallel, so using this tool they'll be able to search executed commands only in the current project's directory or in the whole workspace.

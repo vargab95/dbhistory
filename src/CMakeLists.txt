@@ -20,4 +20,4 @@ add_executable (dbhistory
 
 target_link_libraries (dbhistory ${SQLITE3_LIBRARIES})
 
-install(TARGETS dbhistory DESTINATION /usr/bin)
+install(TARGETS dbhistory RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
