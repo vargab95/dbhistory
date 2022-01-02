@@ -43,7 +43,7 @@ extern db_return_codes_t db_get_history(const char *path, directory_history_t *h
         history->records = (history_record_t *)malloc(sizeof(history_record_t) * record_cnt);
         history->length = 0;
 
-        if (SQLITE_OK != sql_run_command(get_records_callback, history, get_records_cmd, path_id))
+        if (DB_SUCCESS != sql_run_command(get_records_callback, history, get_records_cmd, path_id))
         {
             return DB_ERROR;
         }

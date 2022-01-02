@@ -20,8 +20,8 @@ sudo make install
 
 Add to the end of .bashrc.
 
-```
-  trap 'dbhistory -a "$BASH_COMMAND"' DEBUG
+```bash
+  export PROMPT_COMMAND='RETRN_VAL=$?;dbhistory -a "$(history 1 | sed "s/^[ ]*[0-9]\+[ ]*//" )"'
 ```
 
 ### Configuration file
@@ -34,13 +34,13 @@ By default, the configuration file path is \$HOME/.dbhistory.ini
 
 Specifies the path where the SQLite database will be stored.
 
-Default value is /tmp/.dbhistory.sql
+Default value is \$HOME/.dbhistory.db
 
 #### log_file_path
 
 Specifies the path where the logs will be stored.
 
-Default value is /tmp/.dbhistory.log
+Default value is \$HOME/.dbhistory.log
 
 #### deletion_time_threshold
 

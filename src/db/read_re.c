@@ -73,7 +73,7 @@ extern db_return_codes_t db_search_history(const char *path, directory_history_t
     path_filter_t filter;
     print_message(MSG_TRACE, "%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
 
-    if (SQLITE_OK != sql_run_command(get_path_count_callback, &path_cnt, get_path_count_cmd, NULL))
+    if (DB_SUCCESS != sql_run_command(get_path_count_callback, &path_cnt, get_path_count_cmd, NULL))
     {
         print_message(MSG_ERROR, "Path table reading was unsuccessful.");
         return DB_ERROR;
@@ -93,7 +93,7 @@ extern db_return_codes_t db_search_history(const char *path, directory_history_t
         return DB_ERROR;
     }
 
-    if (SQLITE_OK != sql_run_command(get_path_callback, &filter, get_path_cmd, NULL))
+    if (DB_SUCCESS != sql_run_command(get_path_callback, &filter, get_path_cmd, NULL))
     {
         print_message(MSG_ERROR, "Error while getting matching pathes\n");
         free(filter.path_id_list);
@@ -148,7 +148,7 @@ extern db_return_codes_t db_search_history(const char *path, directory_history_t
     print_message(MSG_DEBUG, "Regex based record list command: %s\n", get_records_cmd);
     free(filter.path_id_list);
 
-    if (SQLITE_OK != sql_run_command(get_record_count_callback, &record_cnt, get_record_count_cmd, NULL))
+    if (DB_SUCCESS != sql_run_command(get_record_count_callback, &record_cnt, get_record_count_cmd, NULL))
     {
         print_message(MSG_ERROR, "Error while fetching record count.\n");
         return DB_ERROR;
@@ -157,7 +157,7 @@ extern db_return_codes_t db_search_history(const char *path, directory_history_t
     history->records = (history_record_t *)malloc(sizeof(history_record_t) * record_cnt);
     history->length = 0;
 
-    if (SQLITE_OK != sql_run_command(get_records_callback, history, get_records_cmd, NULL))
+    if (DB_SUCCESS != sql_run_command(get_records_callback, history, get_records_cmd, NULL))
     {
         print_message(MSG_ERROR, "Error while fetching records.\n");
         return DB_ERROR;

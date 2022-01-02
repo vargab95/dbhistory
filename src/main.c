@@ -64,7 +64,9 @@ static return_codes_t execute_command(const dbhistory_command_t *command);
 int main(int argc, const char **argv)
 {
     return_codes_t return_code = EC_SYS_SW_ERR;
+    char *env_ptr;
     dbhistory_command_t command = {.type = DBHISTORY_NOT_SELECTED};
+    dbhistory_configuration_read_result_t configuration_read_result;
 
     get_default_config_file_path(command.configuration_file_path);
 
@@ -74,11 +76,37 @@ int main(int argc, const char **argv)
         return return_code;
     }
 
-    if (!read_configuration(command.configuration_file_path))
+    configuration_read_result = read_configuration(command.configuration_file_path);
+    switch (configuration_read_result)
     {
-        puts("DBHistory error - Could not read configuration file.");
+    case CNF_OK:
+        break;
+    case CNF_FILE_NOT_EXISTS:
+        print_message(MSG_DEBUG, "Cannot read configuration file: %s\n", command.configuration_file_path);
+        break;
+    default:
+        fprintf(stderr, "DBHistory error - Could not parse configuration file.");
         printf("Check %s for more details\n", g_dbhistory_configuration.log_file_path);
-        print_message(MSG_ERROR, "Cannot read configuration file: %s\n", command.configuration_file_path);
+        print_message(MSG_ERROR, "Cannot parse configuration file: %s\n", command.configuration_file_path);
+        return EC_MISSING_CONFIGURATION;
+    }
+
+    if ((env_ptr = getenv("PROMPT_COMMAND")) != NULL)
+    {
+        if (strstr(env_ptr, "dbhistory") == NULL)
+        {
+            fprintf(stderr, "dbhistory cannot be found in PROMPT_COMMAND. Please make sure, you've configured it "
+                            "according to the readme.\n");
+            print_message(MSG_ERROR, "Invalid PROMPT_COMMAND: %s\n", env_ptr);
+            return EC_MISSING_CONFIGURATION;
+        }
+    }
+    else
+    {
+        fprintf(stderr, "dbhistory cannot find PROMPT_COMMAND environment variable.\n");
+        fprintf(stderr, "Please add export PROMPT_COMMAND='RETRN_VAL=$?;dbhistory -a \"$(history 1 | sed \"s/^[ "
+                        "]*[0-9]\\+[ ]*//\" )\"' to .bashrc\n");
+        print_message(MSG_ERROR, "No PROMPT_COMMAND has been found\n");
         return EC_MISSING_CONFIGURATION;
     }
 
@@ -183,5 +211,5 @@ static return_codes_t execute_command(const dbhistory_command_t *command)
         return EC_SYS_SW_ERR;
     }
 
-    return EC_OK; // TODO replace with specific return code
+    return EC_OK;
 }

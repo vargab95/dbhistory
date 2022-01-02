@@ -39,7 +39,7 @@ extern db_return_codes_t db_connect(const char *db_path)
 
     realpath(db_path, absolute_path);
     print_message(MSG_DEBUG, "Trying to open database: %s\n", absolute_path);
-    if (SQLITE_OK != sql_connect(absolute_path, create_db_structure_cmd))
+    if (DB_SUCCESS != sql_connect(absolute_path, create_db_structure_cmd))
     {
         return_code = DB_ERROR;
     }
@@ -55,7 +55,7 @@ extern db_return_codes_t db_add_record(const char *path, const char *command)
     char *escaped_command, *ecptr;
     int result;
 
-    if (SQLITE_OK == sql_run_command(NULL, NULL, insert_path_cmd, path))
+    if (DB_SUCCESS == sql_run_command(NULL, NULL, insert_path_cmd, path))
     {
         print_message(MSG_DEBUG, "Using last row insert id.\n");
         path_id = sql_get_last_insertion_id();

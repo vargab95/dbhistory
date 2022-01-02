@@ -12,7 +12,7 @@
 static sqlite3 *db;
 static unsigned int last_id = 0;
 
-extern int sql_connect(const char *db_path, const char *command)
+extern db_return_codes_t sql_connect(const char *db_path, const char *command)
 {
     int return_code = 0;
     if (sqlite3_open_v2(db_path, &db, SQLITE_OPEN_READWRITE, NULL))
@@ -29,10 +29,11 @@ extern int sql_connect(const char *db_path, const char *command)
         }
     }
 
-    return return_code;
+    return (return_code == SQLITE_OK) ? DB_SUCCESS : DB_ERROR;
 }
 
-extern int sql_run_command(int (*callback)(void *, int, char **, char **), void *data, const char *command, ...)
+extern db_return_codes_t sql_run_command(int (*callback)(void *, int, char **, char **), void *data,
+                                         const char *command, ...)
 {
     va_list args;
     int rc;
@@ -55,7 +56,7 @@ extern int sql_run_command(int (*callback)(void *, int, char **, char **), void 
 
     free(buffer);
 
-    return rc;
+    return (rc == SQLITE_OK) ? DB_SUCCESS : DB_ERROR;
 }
 
 extern int sql_get_last_insertion_id()

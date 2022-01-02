@@ -53,7 +53,7 @@ static void check_non_referenced_path(const char *path)
     if (get_record_count(path_id) <= 0)
     {
         print_message(MSG_WARNING, "%s has no records!\n", path);
-        if (SQLITE_OK != sql_run_command(NULL, NULL, "DELETE FROM path_map WHERE id=%d;", path_id))
+        if (DB_SUCCESS != sql_run_command(NULL, NULL, "DELETE FROM path_map WHERE id=%d;", path_id))
         {
             print_message(MSG_ERROR, "Could not delete non-referenced path %s\n", path);
             return;
@@ -68,14 +68,14 @@ static void check_non_existing_path(const char *path)
     if (0 != access(path, F_OK))
     {
         print_message(MSG_WARNING, "%s does not exists or permission is denied!\n", path);
-        if (SQLITE_OK != sql_run_command(NULL, NULL, "DELETE FROM history WHERE path_id=%d;", get_path_id(path)))
+        if (DB_SUCCESS != sql_run_command(NULL, NULL, "DELETE FROM history WHERE path_id=%d;", get_path_id(path)))
         {
             print_message(MSG_ERROR, "Could not delete records with non-existing path %s\n", path);
             return;
         }
         print_message(MSG_ERROR, "Records with non-existing path %s were deleted successfully\n", path);
 
-        if (SQLITE_OK != sql_run_command(NULL, NULL, "DELETE FROM path_map WHERE id=%d;", get_path_id(path)))
+        if (DB_SUCCESS != sql_run_command(NULL, NULL, "DELETE FROM path_map WHERE id=%d;", get_path_id(path)))
         {
             print_message(MSG_ERROR, "Could not delete non-existing path %s\n", path);
             return;
@@ -94,7 +94,7 @@ static void delete_old_records()
         return;
     }
 
-    if (SQLITE_OK != sql_run_command(delete_old_records_callback, NULL, get_records_cmd))
+    if (DB_SUCCESS != sql_run_command(delete_old_records_callback, NULL, get_records_cmd))
     {
         print_message(MSG_ERROR, "Selecting all records for check was failed.\n");
         return;
@@ -126,7 +126,7 @@ static int delete_old_records_callback(void *data, int argc, char **argv, char *
     if ((current_time - g_dbhistory_configuration.deletion_time_threshold) >= record_timestamp)
     {
         print_message(MSG_WARNING, "Record %d is out of date\n", record_id);
-        if (SQLITE_OK !=
+        if (DB_SUCCESS !=
             sql_run_command(delete_old_records_callback, NULL, "DELETE FROM history WHERE id=%d;", record_id))
         {
             print_message(MSG_ERROR, "Couldn't delete record %d!\n", record_id);

@@ -1,8 +1,10 @@
 #include <ctype.h>
 #include <linux/limits.h>
+#include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "utils.h"
 
@@ -10,16 +12,17 @@
 
 #define MAX_PARAMETER_NAME_LENGTH 32
 
-dbhistory_configuration_t g_dbhistory_configuration = {.database_path = "/tmp/.dbhistory.sql",
-                                                       .log_file_path = "/tmp/.dbhistory.log",
+dbhistory_configuration_t g_dbhistory_configuration = {.database_path = NULL,
+                                                       .log_file_path = NULL,
                                                        .deletion_time_threshold = -1,
                                                        .max_command_length = 4096,
                                                        .log_level = MSG_INFO};
 
-static int set_parameter(const char *name, const char *value);
+static dbhistory_configuration_read_result_t set_parameter(const char *name, const char *value);
+static void set_default_pathes();
 static void go_to_next_line(FILE *fp);
 
-int read_configuration(const char *path)
+dbhistory_configuration_read_result_t read_configuration(const char *path)
 {
     char tmp;
     char name[MAX_PARAMETER_NAME_LENGTH], value[PATH_MAX];
@@ -29,8 +32,8 @@ int read_configuration(const char *path)
 
     if (fp == NULL)
     {
-        print_message(MSG_ERROR, "Cannot open configuration file %s", path);
-        return 0;
+        set_default_pathes();
+        return CNF_FILE_NOT_EXISTS;
     }
 
     while (!feof(fp))
@@ -71,12 +74,17 @@ int read_configuration(const char *path)
             continue;
         }
 
-        set_parameter(name, value);
+        if (set_parameter(name, value) != CNF_OK)
+        {
+            return CNF_PARSE_ERROR;
+        }
     }
 
     fclose(fp);
 
-    return 1;
+    set_default_pathes();
+
+    return CNF_OK;
 }
 
 static void go_to_next_line(FILE *fp)
@@ -85,7 +93,7 @@ static void go_to_next_line(FILE *fp)
         ;
 }
 
-static int set_parameter(const char *name, const char *value)
+static dbhistory_configuration_read_result_t set_parameter(const char *name, const char *value)
 {
     if (strcmp(name, "database_path") == 0)
     {
@@ -117,8 +125,26 @@ static int set_parameter(const char *name, const char *value)
     }
     else
     {
-        return 0;
+        return CNF_PARSE_ERROR;
     }
 
-    return 1;
+    return CNF_OK;
+}
+
+static void set_default_pathes()
+{
+    char buffer[PATH_MAX];
+    struct passwd *pw = getpwuid(getuid());
+
+    if (g_dbhistory_configuration.database_path == NULL)
+    {
+        sprintf(buffer, "%s/.dbhistory.db", pw->pw_dir);
+        g_dbhistory_configuration.database_path = strdup(buffer);
+    }
+
+    if (g_dbhistory_configuration.log_file_path == NULL)
+    {
+        sprintf(buffer, "%s/.dbhistory.log", pw->pw_dir);
+        g_dbhistory_configuration.log_file_path = strdup(buffer);
+    }
 }

@@ -18,7 +18,7 @@ extern int get_record_count(int path_id)
 {
     const char count_records_cmd[] = "SELECT count(*) FROM history WHERE path_id = %d;";
     int record_cnt = 0;
-    if (SQLITE_OK != sql_run_command(get_record_count_callback, &record_cnt, count_records_cmd, path_id))
+    if (DB_SUCCESS != sql_run_command(get_record_count_callback, &record_cnt, count_records_cmd, path_id))
     {
         return -1;
     }
@@ -30,7 +30,7 @@ extern uint32_t get_path_id(const char *path)
     const char get_path_id_cmd[] = "SELECT * FROM path_map WHERE path = \"%s\" LIMIT 1;";
     int path_id = 0;
 
-    if (sql_run_command(get_path_id_callback, &path_id, get_path_id_cmd, path) != SQLITE_OK)
+    if (sql_run_command(get_path_id_callback, &path_id, get_path_id_cmd, path) != DB_SUCCESS)
     {
         print_message(MSG_ERROR, "Cannot find id for path %s\n", path);
     }

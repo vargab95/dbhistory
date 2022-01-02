@@ -18,8 +18,15 @@ typedef struct
     time_t deletion_time_threshold;
 } dbhistory_configuration_t;
 
+typedef enum
+{
+    CNF_OK = 0,
+    CNF_FILE_NOT_EXISTS = 1,
+    CNF_PARSE_ERROR = 2
+} dbhistory_configuration_read_result_t;
+
 extern dbhistory_configuration_t g_dbhistory_configuration;
 
-extern int read_configuration(const char *path);
+extern dbhistory_configuration_read_result_t read_configuration(const char *path);
 
 #endif
