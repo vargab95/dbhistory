@@ -2,6 +2,10 @@
 
 Directory based history is a tool to maintain a database of command line events in a filterable manner.
 
+## Install
+
+On Ubuntu or any ubuntu based distros it can be installed by using ppa https://launchpad.net/~vargab95/+archive/ubuntu/dbhistory
+
 ## Build and install
 
 ```
