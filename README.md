@@ -1,10 +1,21 @@
 # DBHistory
 
-Directory based history is a tool to maintain a database of command line events in a filterable manner.
+Directory based history is a tool to maintain a database of command line events
+in a filterable manner.
+
+## Use case example
+
+Storing bash history per directory can be useful if a developer works on
+several projects in parallel. In this case, build, test, lint commands can
+vary. When only bash history is used, the developer needs to grep for the used
+commands or look up the script or config files, like package.json. By using
+dbhistory, this process can be simplified by simply running dbhistory in the
+workspace of the project and it'll dump the commands executed on that project.
 
 ## Install
 
-On Ubuntu or any ubuntu based distros it can be installed by using ppa https://launchpad.net/~vargab95/+archive/ubuntu/dbhistory
+On Ubuntu or any ubuntu based distros it can be installed by using ppa
+https://launchpad.net/~vargab95/+archive/ubuntu/dbhistory
 
 ## Build and install
 
@@ -30,9 +41,9 @@ Add to the end of .bashrc.
 
 ### Configuration file
 
-The configuration file shall be in INI format.
-The path of the configuration file can be specified (see in the Command line arguments section).
-By default, the configuration file path is \$HOME/.dbhistory.ini
+The configuration file shall be in INI format.  The path of the configuration
+file can be specified (see in the Command line arguments section). By default,
+the configuration file path is \$HOME/.dbhistory.ini
 
 #### database_path
 
