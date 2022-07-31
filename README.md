@@ -35,14 +35,6 @@ sudo make install
 
 Add to the end of .bashrc.
 
-##### Linux
-
-```bash
-  export PROMPT_COMMAND='RETRN_VAL=$?;dbhistory -a "$(history 1 | sed "s/^[ ]*[0-9]\+[ ]*//" )"'
-```
-
-##### macOS
-
 ```bash
   export PROMPT_COMMAND='RETRN_VAL=$?;dbhistory -a "$(history 1 | sed "s/^[ ]*[0-9]*[ ]*//" )"'
 ```
