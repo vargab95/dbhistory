@@ -1,5 +1,4 @@
 #include <ctype.h>
-#include <linux/limits.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,7 +6,7 @@
 #include <unistd.h>
 
 #include "utils.h"
-
+#include "os_dep.h"
 #include "config.h"
 
 #define MAX_PARAMETER_NAME_LENGTH 32

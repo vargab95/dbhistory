@@ -1,4 +1,3 @@
-#include <linux/limits.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +9,7 @@
 #include "client.h"
 #include "config.h"
 #include "utils.h"
+#include "os_dep.h"
 
 typedef enum return_codes_t
 {

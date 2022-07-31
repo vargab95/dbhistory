@@ -1,5 +1,4 @@
 #include <errno.h>
-#include <linux/limits.h>
 #include <sqlite3.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -13,6 +12,7 @@
 #include "db/common.h"
 #include "sqlite_wrapper.h"
 #include "utils.h"
+#include "os_dep.h"
 #ifdef DBHISTORY_USE_REGEX
 #include "db/read_re.h"
 #else

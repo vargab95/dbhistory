@@ -4,12 +4,12 @@
 #define __USE_XOPEN
 #include <time.h>
 
-#include <linux/limits.h>
 #include <sqlite3.h>
 
 #include "../utils.h"
 #include "common.h"
 #include "sqlite_wrapper.h"
+#include "os_dep.h"
 
 static int get_path_id_callback(void *data, int argc, char **argv, char **col_names);
 static int get_record_count_callback(void *data, int argc, char **argv, char **col_names);

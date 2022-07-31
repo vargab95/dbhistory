@@ -1,5 +1,4 @@
 #include <errno.h>
-#include <linux/limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +8,7 @@
 #include "config.h"
 #include "db/handler.h"
 #include "utils.h"
+#include "os_dep.h"
 
 static void print_records(const directory_history_t *dir_hist);
 

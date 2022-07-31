@@ -1,11 +1,11 @@
 #ifndef __CONFIG_H__
 #define __CONFIG_H__
 
-#include <linux/limits.h>
 #include <stdlib.h>
 #include <time.h>
 
 #include "utils.h"
+#include "os_dep.h"
 
 typedef struct
 {

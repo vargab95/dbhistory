@@ -1,4 +1,3 @@
-#include <linux/limits.h>
 #include <sqlite3.h>
 #include <stdarg.h>
 #include <stddef.h>
@@ -8,6 +7,7 @@
 #include "../config.h"
 #include "../utils.h"
 #include "sqlite_wrapper.h"
+#include "os_dep.h"
 
 static sqlite3 *db;
 static unsigned int last_id = 0;
