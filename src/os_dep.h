@@ -1,5 +1,5 @@
-#ifndef __COMPATIBILITY_H__
-#define __COMPATIBILITY_H__
+#ifndef __OS_DEP_H__
+#define __OS_DEP_H__
 
 #ifdef __linux
 #include <linux/limits.h>
