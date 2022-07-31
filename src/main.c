@@ -147,10 +147,14 @@ static return_codes_t process_arguments(const int argc, const char **argv, dbhis
         switch (opt)
         {
         case -1:
-            command->type = DBHISTORY_LIST;
+            if (command->type == DBHISTORY_NOT_SELECTED)
+            {
+                command->type = DBHISTORY_LIST;
 
-            // + 1 is for the argv[0] -> application name
-            command->argument.list.path = (argc > (found_args + 1)) ? argv[argc - 1] : ".";
+                // + 1 is for the argv[0] -> application name
+                command->argument.list.path = (argc > (found_args + 1)) ? argv[argc - 1] : ".";
+            }
+
             return EC_OK;
 
         case 'f':
