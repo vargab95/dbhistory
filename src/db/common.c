@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -74,4 +75,20 @@ extern void copy_history_record(history_record_t *record, const char *path, cons
 
     strptime(time, "%Y-%m-%d %H:%M:%S", &tm);
     record->timestamp = mktime(&tm);
+}
+
+extern void copy_pinning_record(pinning_record_t *record, const char *path, const char *command, const char *id)
+{
+    size_t str_size;
+    struct tm tm;
+
+    str_size = strlen(path) + 1;
+    record->path = (char *)malloc(str_size * sizeof(char));
+    memcpy((char *const)record->path, path, str_size);
+
+    str_size = strlen(command) + 1;
+    record->command = (char *)malloc(str_size * sizeof(char));
+    memcpy((char *const)record->command, command, str_size);
+
+    sscanf(id, "%d", &record->id);
 }

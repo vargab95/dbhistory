@@ -11,7 +11,9 @@ typedef enum
 } client_return_codes_t;
 
 extern client_return_codes_t client_add_record(const char *command);
-extern client_return_codes_t client_get_records(const char *path);
-extern client_return_codes_t client_search_records(const char *pattern);
+extern client_return_codes_t client_pin_command(const char *command);
+extern client_return_codes_t client_unpin_command(unsigned int id);
+extern client_return_codes_t client_get_records(const char *path, unsigned char use_pinnings);
+extern client_return_codes_t client_search_records(const char *pattern, unsigned char use_pinnings);
 
 #endif

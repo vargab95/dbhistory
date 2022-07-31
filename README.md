@@ -78,6 +78,12 @@ Specifies the maximum length of a command which can be stored.
 
 Default is 4096.
 
+#### use_pinnings
+
+Specifies whether the pinnings feature is enabled.
+
+Default is 1.
+
 #### log_level
 
 Specifies the log level to be used.

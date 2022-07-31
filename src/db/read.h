@@ -4,5 +4,6 @@
 #include "db/common.h"
 
 extern db_return_codes_t db_get_history(const char *path, directory_history_t *history);
+extern db_return_codes_t db_get_pinnings(const char *path, directory_pinnings_t *pinnings);
 
 #endif

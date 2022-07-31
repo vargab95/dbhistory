@@ -5,9 +5,9 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "utils.h"
-#include "os_dep.h"
 #include "config.h"
+#include "os_dep.h"
+#include "utils.h"
 
 #define MAX_PARAMETER_NAME_LENGTH 32
 
@@ -15,7 +15,8 @@ dbhistory_configuration_t g_dbhistory_configuration = {.database_path = NULL,
                                                        .log_file_path = NULL,
                                                        .deletion_time_threshold = -1,
                                                        .max_command_length = 4096,
-                                                       .log_level = MSG_INFO};
+                                                       .log_level = MSG_INFO,
+                                                       .use_pinnings = 1};
 
 static dbhistory_configuration_read_result_t set_parameter(const char *name, const char *value);
 static void set_default_pathes();
@@ -109,6 +110,10 @@ static dbhistory_configuration_read_result_t set_parameter(const char *name, con
     else if (strcmp(name, "max_command_length") == 0)
     {
         g_dbhistory_configuration.max_command_length = atoi(value);
+    }
+    else if (strcmp(name, "use_pinnings") == 0)
+    {
+        g_dbhistory_configuration.use_pinnings = atoi(value);
     }
     else if (strcmp(name, "log_level") == 0)
     {

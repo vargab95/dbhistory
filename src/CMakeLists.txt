@@ -10,6 +10,8 @@ add_executable (dbhistory
                 ${CMAKE_CURRENT_SOURCE_DIR}/cleaner.c
                 ${CMAKE_CURRENT_SOURCE_DIR}/db/handler.c
                 ${CMAKE_CURRENT_SOURCE_DIR}/db/common.c
+                ${CMAKE_CURRENT_SOURCE_DIR}/db/add.c
+                ${CMAKE_CURRENT_SOURCE_DIR}/db/remove.c
                 ${CMAKE_CURRENT_SOURCE_DIR}/db/read.c
                 ${CMAKE_CURRENT_SOURCE_DIR}/db/path.c
                 ${CMAKE_CURRENT_SOURCE_DIR}/db/read_re.c
