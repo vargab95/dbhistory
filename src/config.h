@@ -17,6 +17,8 @@ typedef struct
     // in seconds. -1 means, don't delete
     time_t deletion_time_threshold;
 
+    int result_limit;
+
     unsigned char use_pinnings;
 } dbhistory_configuration_t;
 

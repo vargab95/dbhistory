@@ -13,7 +13,7 @@
 static int get_history_records_callback(void *data, int argc, char **argv, char **col_names);
 static int get_pinning_records_callback(void *data, int argc, char **argv, char **col_names);
 
-extern db_return_codes_t db_get_history(const char *path, directory_history_t *history)
+extern db_return_codes_t db_get_history(const char *path, int limit, directory_history_t *history)
 {
     uint32_t path_id = get_path_id(path);
     print_message(MSG_TRACE, "%s %s %d\n", __FILE__, __FUNCTION__, __LINE__);
@@ -25,7 +25,8 @@ extern db_return_codes_t db_get_history(const char *path, directory_history_t *h
     else
     {
         const char get_records_cmd[] = "SELECT path, command, timestamp FROM history INNER JOIN path_map ON "
-                                       "path_map.id = history.path_id WHERE path_id = %d;";
+                                       "path_map.id = history.path_id WHERE path_id = %d ORDER BY timestamp DESC "
+                                       "LIMIT %d;";
         int record_cnt = get_record_count(path_id);
 
         if (0 >= record_cnt)
@@ -36,7 +37,7 @@ extern db_return_codes_t db_get_history(const char *path, directory_history_t *h
         history->records = (history_record_t *)malloc(sizeof(history_record_t) * record_cnt);
         history->length = 0;
 
-        if (DB_SUCCESS != sql_run_command(get_history_records_callback, history, get_records_cmd, path_id))
+        if (DB_SUCCESS != sql_run_command(get_history_records_callback, history, get_records_cmd, path_id, limit))
         {
             return DB_ERROR;
         }

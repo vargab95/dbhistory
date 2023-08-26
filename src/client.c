@@ -86,7 +86,7 @@ extern client_return_codes_t client_unpin_command(unsigned int id)
     return return_code;
 }
 
-extern client_return_codes_t client_get_records(const char *path, unsigned char use_pinnings)
+extern client_return_codes_t client_get_records(const char *path, int limit, unsigned char use_pinnings)
 {
     directory_history_t dir_hist = {0};
     directory_pinnings_t pinnings = {0};
@@ -101,7 +101,7 @@ extern client_return_codes_t client_get_records(const char *path, unsigned char 
 
     if (DB_SUCCESS == db_connect(g_dbhistory_configuration.database_path))
     {
-        if (DB_SUCCESS == db_get_history(absolute_path, &dir_hist))
+        if (DB_SUCCESS == db_get_history(absolute_path, limit, &dir_hist))
         {
             print_message(MSG_DEBUG, "Directory history length: %d\n", dir_hist.length);
             print_records(&dir_hist);
@@ -123,7 +123,7 @@ extern client_return_codes_t client_get_records(const char *path, unsigned char 
     return return_code;
 }
 
-extern client_return_codes_t client_search_records(const char *pattern, unsigned char use_pinnings)
+extern client_return_codes_t client_search_records(const char *pattern, int limit, unsigned char use_pinnings)
 {
     directory_pinnings_t pinnings = {0};
     directory_history_t dir_hist = {0};
@@ -131,7 +131,7 @@ extern client_return_codes_t client_search_records(const char *pattern, unsigned
 
     if (DB_SUCCESS == db_connect(g_dbhistory_configuration.database_path))
     {
-        if (DB_SUCCESS == db_search_history(pattern, &dir_hist))
+        if (DB_SUCCESS == db_search_history(pattern, limit, &dir_hist))
         {
             print_message(MSG_DEBUG, "Directory history length: %d\n", dir_hist.length);
             print_records(&dir_hist);
@@ -158,7 +158,7 @@ static void print_records(const directory_history_t *dir_hist)
     char buffer[26];
     const size_t length = sizeof(buffer) / sizeof(buffer[0]);
 
-    for (unsigned int index = 0u; index < dir_hist->length; index++)
+    for (int index = dir_hist->length - 1; index >= 0; index--)
     {
         history_record_t *record = &(dir_hist->records[index]);
         struct tm *tm_info;

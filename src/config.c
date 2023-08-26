@@ -16,7 +16,8 @@ dbhistory_configuration_t g_dbhistory_configuration = {.database_path = NULL,
                                                        .deletion_time_threshold = -1,
                                                        .max_command_length = 4096,
                                                        .log_level = MSG_INFO,
-                                                       .use_pinnings = 1};
+                                                       .use_pinnings = 1,
+                                                       .result_limit = 100};
 
 static dbhistory_configuration_read_result_t set_parameter(const char *name, const char *value);
 static void set_default_pathes();
@@ -126,6 +127,10 @@ static dbhistory_configuration_read_result_t set_parameter(const char *name, con
         {
             g_dbhistory_configuration.log_level = log_level;
         }
+    }
+    else if (strcmp(name, "result_limit") == 0)
+    {
+        g_dbhistory_configuration.result_limit = atoi(value);
     }
     else
     {

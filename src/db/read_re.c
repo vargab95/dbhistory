@@ -33,7 +33,7 @@ static int get_record_count_callback(void *data, int argc, char **argv, char **c
 static int get_path_count_callback(void *data, int argc, char **argv, char **col_names);
 static int get_path_callback(void *data, int argc, char **argv, char **col_names);
 
-extern db_return_codes_t db_search_history(const char *path, directory_history_t *history)
+extern db_return_codes_t db_search_history(const char *path, int limit, directory_history_t *history)
 {
     db_return_codes_t return_code;
     char *get_records_cmd;
@@ -66,8 +66,8 @@ extern db_return_codes_t db_search_history(const char *path, directory_history_t
     {
         const char *command_format = "SELECT path, command, timestamp FROM history "
                                      "INNER JOIN path_map ON path_map.id = history.path_id "
-                                     "WHERE path_id IN (%10d);";
-        const char *count_command_format = "SELECT count(*) FROM history WHERE path_id IN (%10d);";
+                                     "WHERE path_id IN (%10d) LIMIT %d;";
+        const char *count_command_format = "SELECT count(*) FROM history WHERE path_id IN (%10d) LIMIT %d;";
 
         return_code = get_commands_single_path(&filter, command_format, count_command_format, &get_records_cmd,
                                               &get_record_count_cmd);
@@ -79,7 +79,7 @@ extern db_return_codes_t db_search_history(const char *path, directory_history_t
     print_message(MSG_DEBUG, "Regex based record list command: %s\n", get_records_cmd);
     free(filter.path_id_list);
 
-    if (DB_SUCCESS != sql_run_command(get_record_count_callback, &record_cnt, get_record_count_cmd, NULL))
+    if (DB_SUCCESS != sql_run_command(get_record_count_callback, &record_cnt, get_record_count_cmd, limit))
     {
         print_message(MSG_ERROR, "Error while fetching record count.\n");
         return DB_ERROR;
@@ -88,7 +88,7 @@ extern db_return_codes_t db_search_history(const char *path, directory_history_t
     history->records = (history_record_t *)malloc(sizeof(history_record_t) * record_cnt);
     history->length = 0;
 
-    if (DB_SUCCESS != sql_run_command(get_history_records_callback, history, get_records_cmd, NULL))
+    if (DB_SUCCESS != sql_run_command(get_history_records_callback, history, get_records_cmd, limit))
     {
         print_message(MSG_ERROR, "Error while fetching records.\n");
         return DB_ERROR;
@@ -236,8 +236,8 @@ static db_return_codes_t get_commands_single_path(const path_filter_t *filter, c
                                                   const char *count_command_format, char **command,
                                                   char **count_command)
 {
-    *command = (char *)malloc(sizeof(char) * strlen(command_format) + 10);
-    *count_command = (char *)malloc(sizeof(char) * strlen(count_command_format) + 10);
+    *command = (char *)malloc(sizeof(char) * strlen(command_format) + 30);
+    *count_command = (char *)malloc(sizeof(char) * strlen(count_command_format) + 30);
 
     if (*command == NULL || *count_command == NULL)
     {
@@ -255,8 +255,8 @@ static db_return_codes_t get_commands_multi_path(const path_filter_t *filter, co
 {
     char path_id_buffer[32];
 
-    *command = (char *)malloc(sizeof(char) * 12 * filter->path_count + strlen(command_format) + 3);
-    *count_command = (char *)malloc(sizeof(char) * 12 * filter->path_count + strlen(count_command_format) + 3);
+    *command = (char *)malloc(sizeof(char) * 12 * filter->path_count + strlen(command_format) + 32);
+    *count_command = (char *)malloc(sizeof(char) * 12 * filter->path_count + strlen(count_command_format) + 32);
 
     if (*command == NULL || *count_command == NULL)
     {
@@ -273,8 +273,8 @@ static db_return_codes_t get_commands_multi_path(const path_filter_t *filter, co
         strcat(*count_command, path_id_buffer);
     }
 
-    strcat(*command, ");");
-    strcat(*count_command, ");");
+    strcat(*command, ") ORDER BY timestamp DESC LIMIT %d;");
+    strcat(*count_command, ") LIMIT %d;");
 
     return DB_SUCCESS;
 }

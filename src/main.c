@@ -56,10 +56,12 @@ typedef struct
         struct
         {
             const char *path;
+            int limit;
         } list;
         struct
         {
             const char *pattern;
+            int limit;
         } search;
         struct
         {
@@ -96,6 +98,25 @@ int main(int argc, const char **argv)
         {
             command.use_pinnings = g_dbhistory_configuration.use_pinnings;
         }
+
+        switch (command.type)
+        {
+            case DBHISTORY_LIST:
+                if (command.argument.list.limit <= 0)
+                {
+                    command.argument.list.limit = g_dbhistory_configuration.result_limit;
+                }
+                break;
+            case DBHISTORY_SEARCH:
+                if (command.argument.search.limit <= 0)
+                {
+                    command.argument.search.limit = g_dbhistory_configuration.result_limit;
+                }
+                break;
+            default:
+                break;
+        }
+
         break;
     case CNF_FILE_NOT_EXISTS:
         print_message(MSG_DEBUG, "Cannot read configuration file: %s\n", command.configuration_file_path);
@@ -140,23 +161,13 @@ static void get_default_config_file_path(char *configuration_file_path)
 static return_codes_t process_arguments(const int argc, const char **argv, dbhistory_command_t *command)
 {
     int opt;
+    int limit = -1;
     unsigned int found_args = 0;
 
-    while ((opt = getopt(argc, (char **)argv, "a:s:cf:hp:u:o")))
+    while ((opt = getopt(argc, (char **)argv, "a:s:cf:hp:u:ol:")) >= 0)
     {
         switch (opt)
         {
-        case -1:
-            if (command->type == DBHISTORY_NOT_SELECTED)
-            {
-                command->type = DBHISTORY_LIST;
-
-                // + 1 is for the argv[0] -> application name
-                command->argument.list.path = (argc > (found_args + 1)) ? argv[argc - 1] : ".";
-            }
-
-            return EC_OK;
-
         case 'f':
             found_args += 2;
 
@@ -210,6 +221,19 @@ static return_codes_t process_arguments(const int argc, const char **argv, dbhis
 
             return EC_OK;
 
+        case 'l':
+        {
+            found_args += 2;
+
+            if (sscanf(optarg, "%d", &limit) != 1)
+            {
+                print_message(MSG_INFO, "Invalid limit.\n");
+                return EC_INVALID_ARG;
+            }
+
+            break;
+        }
+
         case 'o':
             found_args++;
             command->use_pinnings = 0;
@@ -223,6 +247,26 @@ static return_codes_t process_arguments(const int argc, const char **argv, dbhis
             print_message(MSG_INFO, "Unknown option: %c\n", optopt);
             return EC_INVALID_ARG;
         }
+    }
+
+    if (command->type == DBHISTORY_NOT_SELECTED)
+    {
+        command->type = DBHISTORY_LIST;
+
+        // + 1 is for the argv[0] -> application name
+        command->argument.list.path = (argc > (found_args + 1)) ? argv[argc - 1] : ".";
+    }
+
+    switch (command->type)
+    {
+    case DBHISTORY_LIST:
+        command->argument.list.limit = limit;
+        break;
+    case DBHISTORY_SEARCH:
+        command->argument.search.limit = limit;
+        break;
+    default:
+        break;
     }
 
     return (command->type == DBHISTORY_NOT_SELECTED) ? EC_SYS_SW_ERR : EC_OK;
@@ -241,7 +285,8 @@ static void print_help(const char *name)
                "    -s Search by applying given regex to pathes\n"
                "    -p Pin a command to the current folder\n"
                "    -u Unpin a command by ID\n"
-               "    -o Show only the history without pinnings\n",
+               "    -o Show only the history without pinnings\n"
+               "    -l Limit the number of results\n",
                name);
     }
     else
@@ -252,7 +297,8 @@ static void print_help(const char *name)
                "    -f Specify configuration file\n"
                "    -c Cleans up the database\n"
                "    -a Adds the COMMAND to the history db\n"
-               "    -s Search by applying given regex to pathes\n",
+               "    -s Search by applying given regex to pathes\n"
+               "    -l Limit the number of results\n",
                name);
     }
 }
@@ -266,7 +312,8 @@ static return_codes_t execute_command(const dbhistory_command_t *command)
     case DBHISTORY_LIST:
         print_message(MSG_INFO, "List history of %s directory.\n",
                       (strcmp(".", command->argument.list.path) == 0) ? "current" : command->argument.list.path);
-        return_code = client_get_records(command->argument.list.path, command->use_pinnings);
+        return_code =
+            client_get_records(command->argument.list.path, command->argument.list.limit, command->use_pinnings);
         break;
     case DBHISTORY_ADD:
         print_message(MSG_INFO, "Adding entry %s\n", command->argument.add.command);
@@ -292,7 +339,8 @@ static return_codes_t execute_command(const dbhistory_command_t *command)
         break;
     case DBHISTORY_SEARCH:
         print_message(MSG_INFO, "List history for %s regexp.\n", command->argument.search.pattern);
-        return_code = client_search_records(command->argument.search.pattern, command->use_pinnings);
+        return_code = client_search_records(command->argument.search.pattern, command->argument.search.limit,
+                                            command->use_pinnings);
         break;
     case DBHISTORY_CLEANER:
         print_message(MSG_INFO, "Starting cleaner\n");
