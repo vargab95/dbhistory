@@ -90,10 +90,39 @@ The following values can be used:
 
 The default value is INFO (2).
 
+#### result_limit
+
+Specifies the default limit of result records. Only the last n records will be
+printed by dbhistory to avoid slow listing due to printing thousands of
+commands. Can be overriden by the -l command line argument.
+
+The default value is 100.
+
 ### Command line arguments
 
 - -h Shows this help message
-- -c Specify configuration file
-- -p Cleans up the database
+- -f Specify configuration file
+- -c Cleans up the database
 - -a Adds the COMMAND to the history db
 - -s Search by applying given regex to pathes
+- -p Pin a command to the current folder
+- -u Unpin a command by ID
+- -o Show only the history without pinnings
+- -l Limit the number of results
+
+## Statistics
+
+As dbhistory uses SQLite3 by default, it does not make sense to write
+predefined statistic commands into the tool. If you're interested in history
+statistics, it's recommended to open the database file with an sqlite browser
+and create views for the statistics. For example, a history count per path
+statistics view can be created by executing the following SQL statement.
+
+```sql
+CREATE VIEW history_count_per_path 
+AS
+SELECT path, COUNT(history.path_id) AS occurence
+FROM history JOIN path_map ON path_map.id == history.path_id
+GROUP BY history.path_id 
+ORDER BY occurence DESC 
+```
